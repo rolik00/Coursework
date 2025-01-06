@@ -5,6 +5,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import ru.coursework.MinorsHSEFeedback.db.User;
+import ru.coursework.MinorsHSEFeedback.db.Minor;
+import ru.coursework.MinorsHSEFeedback.repository.MinorRepository;
 import ru.coursework.MinorsHSEFeedback.repository.UserRepository;
 
 import java.util.List;
@@ -14,9 +16,13 @@ public class MainController {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private MinorRepository minorRepository;
 
     @GetMapping("")
-    public String viewHomePage() {
+    public String viewHomePage(Model model) {
+        List<Minor> minors = minorRepository.findAll();
+        model.addAttribute("minors", minors);
         return "index";
     }
 

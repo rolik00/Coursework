@@ -13,6 +13,22 @@
 		<h3><a th:href="@{/users}">List of Users</a></h3>
 		<h3><a th:href="@{/register}">Register</a></h3>
 		<h3><a th:href="@{/login}">Login</a></h3>
+
+		<h2>Minors</h2>
+		<table class="table table-bordered">
+			<thead>
+			<tr>
+				<th>Name</th>
+				<th>Rating</th>
+			</tr>
+			</thead>
+			<tbody>
+			<tr th:each="minor : ${minors}">
+				<td th:text="${minor.title}"></td>
+				<td th:text="${minor.rating}"></td>
+			</tr>
+			</tbody>
+		</table>
 	</div>
 	
 </body>
