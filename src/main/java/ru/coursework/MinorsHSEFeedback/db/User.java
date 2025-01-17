@@ -33,4 +33,6 @@ public class User {
 	private int count = 0;
 	@Column(nullable = false)
 	private float rating = 0;
+	@Column
+	private String resetPasswordToken;
 }
