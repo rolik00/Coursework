@@ -1,4 +1,4 @@
-package ru.coursework.MinorsHSEFeedback;
+package ru.coursework.MinorsHSEFeedback.components;
 
 import jakarta.servlet.http.HttpServletRequest;
 
