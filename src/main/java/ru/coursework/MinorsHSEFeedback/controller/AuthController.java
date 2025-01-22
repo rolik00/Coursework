@@ -8,19 +8,23 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import ru.coursework.MinorsHSEFeedback.components.EmailSender;
 import ru.coursework.MinorsHSEFeedback.db.User;
 import ru.coursework.MinorsHSEFeedback.repository.UserRepository;
 
 import java.security.Principal;
 import java.util.regex.Pattern;
 
+import static ru.coursework.MinorsHSEFeedback.enums.Errors.*;
+
 @Controller
 public class AuthController {
-
 	@Autowired
 	private UserRepository userRepository;
+	@Autowired
+	private EmailSender emailSender;
 
-	private static final Pattern PASSWORD_PATTERN = Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{12,}$");
+	private static final Pattern PASSWORD_PATTERN = Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=_])(?=\\S+$).{8,}$");
 
 	@GetMapping("/register")
 	public String showRegistrationForm(Model model) {
@@ -32,34 +36,38 @@ public class AuthController {
 	@PostMapping("/process_register")
 	public String processRegister(User user, Model model) {
 		if (userRepository.findByEmail(user.getEmail()).isPresent()) {
-			model.addAttribute("error", "Пользователь с такой почтой уже зарегистрирован!");
+			model.addAttribute("error", IS_EXIST_ERROR.getTitle());
 			return "error";
 		}
 
 		if (!user.getEmail().endsWith("@edu.hse.ru")) {
-			model.addAttribute("error", "Не является корпоративной почтой ВШЭ");
+			model.addAttribute("error", IS_NOT_HSE_ERROR.getTitle());
 			return "error";
 		}
 
 		if (!PASSWORD_PATTERN.matcher(user.getPassword()).matches()) {
-			model.addAttribute("error", "Password must be at least 12 characters long and contain at least one uppercase letter, one lowercase letter, one digit, and one special character");
+			model.addAttribute("error", UNRELIABLE_PASSWORD_ERROR.getTitle());
 			return "error";
 		}
+
+		//TODO: проверка что password1 == password2
 
 		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 		String encodedPassword = passwordEncoder.encode(user.getPassword());
 		user.setPassword(encodedPassword);
 		userRepository.save(user);
+
+		emailSender.sendEmail(user.getEmail(), "Регистрация на портале MinorsHSEFeedbacks", "Здравствуйте, " + user.getName() + "!\n\n\nСообщаем Вам, что вы успешно зарегистрировали на портале MinorsHSEFeedbacks");
 		
 		return "register_success";
 	}
 
-	@GetMapping("/update-password")
+	@GetMapping("/update_password")
 	public String updatePasswordForm() {
-		return "update-password";
+		return "update_password";
 	}
 
-	@PostMapping("/update-password")
+	@PostMapping("/update_password")
 	public String updatePassword(@RequestParam String currentPassword,
 								 @RequestParam String newPassword,
 								 @RequestParam String confirmNewPassword,
@@ -69,20 +77,20 @@ public class AuthController {
 					.orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
 			if (!newPassword.equals(confirmNewPassword)) {
-				model.addAttribute("error", "New passwords do not match");
-				return "update-password";
+				model.addAttribute("error", PASSWORD_NOT_MATCH_ERROR.getTitle());
+				return "update_password";
 			}
 
 			if(!PASSWORD_PATTERN.matcher(newPassword).matches()) {
-				model.addAttribute("error", "Password must be at least 12 characters long and contain at least one uppercase letter, one lowercase letter, one digit, and one special character");
-				return "update-password";
+				model.addAttribute("error", UNRELIABLE_PASSWORD_ERROR.getTitle());
+				return "update_password";
 			}
 
 			BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 			String encodedPassword = passwordEncoder.encode(newPassword);
 			if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
-				model.addAttribute("error", "Current password is incorrect");
-				return "update-password";
+				model.addAttribute("error", UNCORRECT_PASSWORD_ERROR.getTitle());
+				return "update_password";
 			}
 
 			user.setPassword(encodedPassword);
@@ -92,6 +100,6 @@ public class AuthController {
 		} catch (Exception e) {
 			model.addAttribute("error", e.getMessage());
 		}
-		return "update-password";
+		return "update_password";
 	}
 }

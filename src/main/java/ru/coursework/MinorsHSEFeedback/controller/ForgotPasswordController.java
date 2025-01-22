@@ -14,6 +14,10 @@ import ru.coursework.MinorsHSEFeedback.db.User;
 import ru.coursework.MinorsHSEFeedback.extraFunctions.RandomString;
 import ru.coursework.MinorsHSEFeedback.service.UserService;
 
+import java.util.regex.Pattern;
+
+import static ru.coursework.MinorsHSEFeedback.enums.Errors.UNRELIABLE_PASSWORD_ERROR;
+
 @Controller
 public class ForgotPasswordController {
     @Autowired
@@ -22,6 +26,8 @@ public class ForgotPasswordController {
     private EmailSender emailSender;
 
     private RandomString randomString = new RandomString();
+
+    private static final Pattern PASSWORD_PATTERN = Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=_])(?=\\S+$).{8,}$");
 
     @GetMapping("/forgot_password")
     public String showForgotPasswordForm() {
@@ -73,6 +79,12 @@ public class ForgotPasswordController {
             model.addAttribute("message", "Invalid Token");
             return "message";
         } else {
+            //TODO: проверка, что password1 = password2
+
+            if (!PASSWORD_PATTERN.matcher(user.getPassword()).matches()) {
+                model.addAttribute("error", UNRELIABLE_PASSWORD_ERROR.getTitle());
+                return "error";
+            }
             userService.updatePassword(user, password);
 
             model.addAttribute("message", "You have successfully changed your password.");
