@@ -6,14 +6,18 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import ru.coursework.MinorsHSEFeedback.db.User;
 import ru.coursework.MinorsHSEFeedback.repository.UserRepository;
+import ru.coursework.MinorsHSEFeedback.service.UserService;
 
 import java.util.List;
 
 @Controller
 public class MainController {
 
+    /*@Autowired
+    private UserRepository userRepository;*/
+
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     @GetMapping("")
     public String viewHomePage() {
@@ -22,7 +26,8 @@ public class MainController {
 
     @GetMapping("/users")
     public String listUsers(Model model) {
-        List<User> listUsers = userRepository.findAll();
+        //List<User> listUsers = userRepository.findAll();
+        List<User> listUsers = userService.findAll();
         model.addAttribute("listUsers", listUsers);
 
         return "users";

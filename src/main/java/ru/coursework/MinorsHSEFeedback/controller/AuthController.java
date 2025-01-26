@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import ru.coursework.MinorsHSEFeedback.components.EmailSender;
 import ru.coursework.MinorsHSEFeedback.db.User;
 import ru.coursework.MinorsHSEFeedback.repository.UserRepository;
+import ru.coursework.MinorsHSEFeedback.service.UserService;
 
 import java.security.Principal;
 import java.util.regex.Pattern;
@@ -19,8 +20,11 @@ import static ru.coursework.MinorsHSEFeedback.enums.Errors.*;
 
 @Controller
 public class AuthController {
+
+	/*@Autowired
+	private UserRepository userRepository;*/
 	@Autowired
-	private UserRepository userRepository;
+	private UserService userService;
 	@Autowired
 	private EmailSender emailSender;
 
@@ -35,7 +39,7 @@ public class AuthController {
 	
 	@PostMapping("/process_register")
 	public String processRegister(User user, Model model) {
-		if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+		if (userService.findByEmail(user.getEmail()).isPresent()) {
 			model.addAttribute("error", IS_EXIST_ERROR.getTitle());
 			return "error";
 		}
@@ -55,7 +59,7 @@ public class AuthController {
 		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 		String encodedPassword = passwordEncoder.encode(user.getPassword());
 		user.setPassword(encodedPassword);
-		userRepository.save(user);
+		userService.save(user);
 
 		emailSender.sendEmail(user.getEmail(), "Регистрация на портале MinorsHSEFeedbacks", "Здравствуйте, " + user.getName() + "!\n\n\nСообщаем Вам, что вы успешно зарегистрировали на портале MinorsHSEFeedbacks");
 		
@@ -73,7 +77,7 @@ public class AuthController {
 								 @RequestParam String confirmNewPassword,
 								 Principal principal, Model model) {
 		try {
-			User user = userRepository.findByEmail(principal.getName())
+			User user = userService.findByEmail(principal.getName())
 					.orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
 			if (!newPassword.equals(confirmNewPassword)) {
@@ -94,7 +98,7 @@ public class AuthController {
 			}
 
 			user.setPassword(encodedPassword);
-			userRepository.save(user);
+			userService.save(user);
 
 			model.addAttribute("message", "Password updated successfully");
 		} catch (Exception e) {

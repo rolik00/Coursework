@@ -8,6 +8,9 @@ import org.springframework.stereotype.Service;
 import ru.coursework.MinorsHSEFeedback.db.User;
 import ru.coursework.MinorsHSEFeedback.repository.UserRepository;
 
+import java.util.List;
+import java.util.Optional;
+
 @Service
 @Transactional
 public class UserService {
@@ -35,5 +38,16 @@ public class UserService {
         userRepository.save(user);
     }
 
+    public List<User> findAll() {
+        return userRepository.findAll();
+    }
+
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    public void save(User user) {
+        userRepository.save(user);
+    }
 }
 
