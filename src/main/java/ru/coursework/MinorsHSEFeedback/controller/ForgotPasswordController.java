@@ -1,5 +1,6 @@
 package ru.coursework.MinorsHSEFeedback.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
@@ -34,6 +35,7 @@ public class ForgotPasswordController {
         return "forgot_password_form";
     }
 
+    @Operation(summary = "Отправка временного токена на почту")
     @PostMapping("/forgot_password")
     public String processForgotPassword(HttpServletRequest request, Model model) {
         String email = request.getParameter("email");
@@ -67,6 +69,7 @@ public class ForgotPasswordController {
         return "reset_password_form";
     }
 
+    @Operation(summary = "Восстановление пароля")
     @PostMapping("/reset_password")
     public String processResetPassword(HttpServletRequest request, Model model) {
         String token = request.getParameter("token");

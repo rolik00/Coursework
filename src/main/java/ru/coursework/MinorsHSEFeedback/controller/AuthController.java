@@ -1,5 +1,7 @@
 package ru.coursework.MinorsHSEFeedback.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -10,7 +12,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.coursework.MinorsHSEFeedback.components.EmailSender;
 import ru.coursework.MinorsHSEFeedback.db.User;
-import ru.coursework.MinorsHSEFeedback.repository.UserRepository;
 import ru.coursework.MinorsHSEFeedback.service.UserService;
 
 import java.security.Principal;
@@ -19,10 +20,8 @@ import java.util.regex.Pattern;
 import static ru.coursework.MinorsHSEFeedback.enums.Errors.*;
 
 @Controller
+@Slf4j
 public class AuthController {
-
-	/*@Autowired
-	private UserRepository userRepository;*/
 	@Autowired
 	private UserService userService;
 	@Autowired
@@ -36,20 +35,25 @@ public class AuthController {
 		
 		return "signup_form";
 	}
-	
+
+	@Operation(summary = "Регистрация нового пользователя")
 	@PostMapping("/process_register")
 	public String processRegister(User user, Model model) {
+		log.info("invoke processRegister");
 		if (userService.findByEmail(user.getEmail()).isPresent()) {
+			log.error("User = {}, error = {} ", user.getEmail(), IS_EXIST_ERROR.getTitle());
 			model.addAttribute("error", IS_EXIST_ERROR.getTitle());
 			return "error";
 		}
 
 		if (!user.getEmail().endsWith("@edu.hse.ru")) {
+			log.error("User = {}, error = {} ", user.getEmail(), IS_NOT_HSE_ERROR.getTitle());
 			model.addAttribute("error", IS_NOT_HSE_ERROR.getTitle());
 			return "error";
 		}
 
 		if (!PASSWORD_PATTERN.matcher(user.getPassword()).matches()) {
+			log.error("User = {}, error = {} ", user.getEmail(), UNRELIABLE_PASSWORD_ERROR.getTitle());
 			model.addAttribute("error", UNRELIABLE_PASSWORD_ERROR.getTitle());
 			return "error";
 		}
@@ -71,29 +75,41 @@ public class AuthController {
 		return "update_password";
 	}
 
+	@Operation(summary = "Обновление пароля")
 	@PostMapping("/update_password")
 	public String updatePassword(@RequestParam String currentPassword,
 								 @RequestParam String newPassword,
 								 @RequestParam String confirmNewPassword,
 								 Principal principal, Model model) {
+		log.info("invoke updatePassword");
 		try {
 			User user = userService.findByEmail(principal.getName())
 					.orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
+			BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+			String encodedPassword = passwordEncoder.encode(newPassword);
+
+			if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+				log.error("User = {}, error = {} ", user.getEmail(), UNCORRECT_PASSWORD_ERROR.getTitle());
+				model.addAttribute("error", UNCORRECT_PASSWORD_ERROR.getTitle());
+				return "update_password";
+			}
+
+			if (passwordEncoder.matches(newPassword, user.getPassword())) {
+				log.error("User = {}, error = {} ", user.getEmail(), PASSWORD_MATCH_ERROR.getTitle());
+				model.addAttribute("error", PASSWORD_MATCH_ERROR.getTitle());
+				return "update_password";
+			}
+
 			if (!newPassword.equals(confirmNewPassword)) {
+				log.error("User = {}, error = {} ", user.getEmail(), PASSWORD_NOT_MATCH_ERROR.getTitle());
 				model.addAttribute("error", PASSWORD_NOT_MATCH_ERROR.getTitle());
 				return "update_password";
 			}
 
 			if(!PASSWORD_PATTERN.matcher(newPassword).matches()) {
+				log.error("User = {}, error = {} ", user.getEmail(), UNRELIABLE_PASSWORD_ERROR.getTitle());
 				model.addAttribute("error", UNRELIABLE_PASSWORD_ERROR.getTitle());
-				return "update_password";
-			}
-
-			BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-			String encodedPassword = passwordEncoder.encode(newPassword);
-			if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
-				model.addAttribute("error", UNCORRECT_PASSWORD_ERROR.getTitle());
 				return "update_password";
 			}
 
