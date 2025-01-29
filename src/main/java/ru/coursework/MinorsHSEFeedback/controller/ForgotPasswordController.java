@@ -93,7 +93,7 @@ public class ForgotPasswordController {
             model.addAttribute("message", "Invalid Token");
             return "message";
         } else {
-            if (!PASSWORD_PATTERN.matcher(user.getPassword()).matches()) {
+            if (!PASSWORD_PATTERN.matcher(request.getPassword()).matches()) {
                 log.error("User = {}, error = {} ", user.getEmail(), UNRELIABLE_PASSWORD_ERROR.getTitle());
                 model.addAttribute("error", UNRELIABLE_PASSWORD_ERROR.getTitle());
                 return "error";

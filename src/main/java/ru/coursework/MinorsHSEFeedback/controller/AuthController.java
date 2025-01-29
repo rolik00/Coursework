@@ -64,7 +64,7 @@ public class AuthController {
 
 		if (!request.getPassword().equals(request.getConfirmPassword())) {
 			log.error("User = {}, error = {} ", request.getEmail(), PASSWORD_NOT_MATCH_ERROR.getTitle());
-			model.addAttribute("error", PASSWORD_MATCH_ERROR.getTitle());
+			model.addAttribute("error", PASSWORD_NOT_MATCH_ERROR.getTitle());
 			return "error";
 		}
 
