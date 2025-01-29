@@ -1,64 +1,41 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-	<meta charset="ISO-8859-1">
-	<title>Sign Up - CodeJava</title>
-	<link rel="stylesheet" type="text/css" href="/webjars/bootstrap/css/bootstrap.min.css" />
-	<script type="text/javascript" src="/webjars/jquery/jquery.min.js"></script>
-	<script type="text/javascript" src="/webjars/bootstrap/js/bootstrap.min.js"></script>
+	<title>Registration</title>
+	<link rel="stylesheet" type="text/css" th:href="@{/css/styles.css}">
 </head>
 <body>
-	<div class="container text-center">
+<div class="container">
+	<h2>Registration</h2>
+	<form th:action="@{/process_register}" method="post">
 		<div>
-			<h1>User Registration - Sign Up</h1>
+			<label for="name">Name:</label>
+			<input type="text" id="name" name="name" required>
 		</div>
-		<form th:action="@{/process_register}" th:object="${user}" 
-			method="post" style="max-width: 600px; margin: 0 auto;">
-		<div class="m-3">
-			<div class="form-group row">
-				<label class="col-4 col-form-label">E-mail: </label>
-				<div class="col-8">
-					<input type="email" th:field="*{email}" class="form-control" required />
-				</div>
-			</div>
-			
-			<div class="form-group row">
-				<label class="col-4 col-form-label">Password: </label>
-				<div class="col-8">
-					<input type="password" th:field="*{password}" class="form-control" 
-							required minlength="6" maxlength="50"/>
-				</div>
-			</div>
-			
-			<div class="form-group row">
-				<label class="col-4 col-form-label">name: </label>
-				<div class="col-8">
-					<input type="text" th:field="*{name}" class="form-control"
-							required minlength="2" maxlength="30"/>
-				</div>
-			</div>
-
-			<div class="form-group row">
-				<label class="col-4 col-form-label">courseTitle: </label>
-				<div class="col-8">
-					<input type="text" th:field="*{courseTitle}" class="form-control"
-						   required minlength="2" maxlength="50"/>
-				</div>
-			</div>
-
-			<div class="form-group row">
-				<label class="col-4 col-form-label">minorTitle: </label>
-				<div class="col-8">
-					<input type="text" th:field="*{minorTitle}" class="form-control"
-						   required minlength="2" maxlength="50"/>
-				</div>
-			</div>
-			
-			<div>
-				<button type="submit" class="btn btn-primary">Sign Up</button> 
-			</div>
+		<div>
+			<label for="email">Email:</label>
+			<input type="email" id="email" name="email" required>
 		</div>
-		</form>
-	</div>
+		<div>
+			<label for="courseTitle">CourseTitle:</label>
+			<input type="text" id="courseTitle" name="courseTitle" required>
+		</div>
+		<div>
+			<label for="minorTitle">MinorTitle:</label>
+			<input type="text" id="minorTitle" name="minorTitle" required>
+		</div>
+		<div>
+			<label for="password">Password:</label>
+			<input type="password" id="password" name="password" required>
+		</div>
+		<div>
+			<label for="confirmPassword">ConfirmPassword:</label>
+			<input type="password" id="confirmPassword" name="confirmPassword" required>
+		</div>
+		<div>
+			<button type="submit">Sign Up</button>
+		</div>
+	</form>
+</div>
 </body>
 </html>
