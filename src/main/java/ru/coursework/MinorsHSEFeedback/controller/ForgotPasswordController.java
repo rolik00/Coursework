@@ -32,7 +32,7 @@ public class ForgotPasswordController {
     private EmailSender emailSender;
 
     private RandomString randomString = new RandomString();
-        private static String BASE_URL = "http://localhost:8080";
+    private static String BASE_URL = "http://localhost:8080";
 
     private static final Pattern PASSWORD_PATTERN = Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=_])(?=\\S+$).{8,}$");
 
