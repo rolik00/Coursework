@@ -1,7 +1,6 @@
 package ru.coursework.MinorsHSEFeedback.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
@@ -20,8 +19,12 @@ import ru.coursework.MinorsHSEFeedback.service.UserService;
 
 import java.util.regex.Pattern;
 
-import static ru.coursework.MinorsHSEFeedback.enums.Errors.*;
-import static ru.coursework.MinorsHSEFeedback.enums.Letters.*;
+import static ru.coursework.MinorsHSEFeedback.enums.Errors.PASSWORD_NOT_MATCH_ERROR;
+import static ru.coursework.MinorsHSEFeedback.enums.Errors.UNRELIABLE_PASSWORD_ERROR;
+import static ru.coursework.MinorsHSEFeedback.enums.Letters.BEGIN;
+import static ru.coursework.MinorsHSEFeedback.enums.Letters.END;
+import static ru.coursework.MinorsHSEFeedback.enums.Letters.RESET_PASSWORD_1;
+import static ru.coursework.MinorsHSEFeedback.enums.Letters.RESET_PASSWORD_2;
 
 @Controller
 @Slf4j

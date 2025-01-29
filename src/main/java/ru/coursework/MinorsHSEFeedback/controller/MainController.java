@@ -5,7 +5,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import ru.coursework.MinorsHSEFeedback.db.User;
-import ru.coursework.MinorsHSEFeedback.repository.UserRepository;
 import ru.coursework.MinorsHSEFeedback.service.UserService;
 
 import java.util.List;

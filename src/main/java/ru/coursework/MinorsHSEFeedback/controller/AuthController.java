@@ -10,17 +10,25 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import ru.coursework.MinorsHSEFeedback.request.RegistrationRequest;
 import ru.coursework.MinorsHSEFeedback.components.EmailSender;
 import ru.coursework.MinorsHSEFeedback.db.User;
+import ru.coursework.MinorsHSEFeedback.request.RegistrationRequest;
 import ru.coursework.MinorsHSEFeedback.request.UpdatePasswordRequest;
 import ru.coursework.MinorsHSEFeedback.service.UserService;
 
 import java.security.Principal;
 import java.util.regex.Pattern;
 
-import static ru.coursework.MinorsHSEFeedback.enums.Errors.*;
-import static ru.coursework.MinorsHSEFeedback.enums.Letters.*;
+import static ru.coursework.MinorsHSEFeedback.enums.Errors.IS_EXIST_ERROR;
+import static ru.coursework.MinorsHSEFeedback.enums.Errors.IS_NOT_HSE_ERROR;
+import static ru.coursework.MinorsHSEFeedback.enums.Errors.PASSWORD_MATCH_ERROR;
+import static ru.coursework.MinorsHSEFeedback.enums.Errors.PASSWORD_NOT_MATCH_ERROR;
+import static ru.coursework.MinorsHSEFeedback.enums.Errors.UNCORRECT_PASSWORD_ERROR;
+import static ru.coursework.MinorsHSEFeedback.enums.Errors.UNRELIABLE_PASSWORD_ERROR;
+import static ru.coursework.MinorsHSEFeedback.enums.Letters.BEGIN;
+import static ru.coursework.MinorsHSEFeedback.enums.Letters.END;
+import static ru.coursework.MinorsHSEFeedback.enums.Letters.REGISTRATION;
+import static ru.coursework.MinorsHSEFeedback.enums.Letters.UPDATE_PASSWORD;
 
 @Controller
 @Slf4j
