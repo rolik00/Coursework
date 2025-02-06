@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.coursework.MinorsHSEFeedback.db.Minor;
 import ru.coursework.MinorsHSEFeedback.db.Result;
-import ru.coursework.MinorsHSEFeedback.db.UiMinor;
+import ru.coursework.MinorsHSEFeedback.db.ui.UiMinor;
 import ru.coursework.MinorsHSEFeedback.mapper.UiMinorMapper;
 import ru.coursework.MinorsHSEFeedback.repository.ResultRepository;
 

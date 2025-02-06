@@ -6,8 +6,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.coursework.MinorsHSEFeedback.db.User;
+import ru.coursework.MinorsHSEFeedback.db.ui.UiUser;
+import ru.coursework.MinorsHSEFeedback.mapper.UiUserMapper;
 import ru.coursework.MinorsHSEFeedback.repository.UserRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,6 +20,8 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private UiUserMapper uiUserMapper;
 
     public void updateResetPasswordToken(String token, String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email)
@@ -38,8 +43,13 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public List<User> findAll() {
-        return userRepository.findAll();
+    public List<UiUser> findAll() {
+        List<User> users = userRepository.findAll();
+        List<UiUser> uiUsers = new ArrayList<>();
+        for (User user : users) {
+            uiUsers.add(uiUserMapper.apply(user));
+        }
+        return uiUsers;
     }
 
     public Optional<User> findByEmail(String email) {

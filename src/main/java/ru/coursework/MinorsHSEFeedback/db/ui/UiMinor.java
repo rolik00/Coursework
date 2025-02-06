@@ -1,4 +1,4 @@
-package ru.coursework.MinorsHSEFeedback.db;
+package ru.coursework.MinorsHSEFeedback.db.ui;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
