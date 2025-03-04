@@ -5,17 +5,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Set;
+
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UpdatePasswordRequest {
+public class MinorsForCTRequest {
     @NotNull
-    private String login;
-    @NotNull
-    private String currentPassword;
-    @NotNull
-    private String newPassword;
-    @NotNull
-    private String confirmNewPassword;
+    Set<Long> ids;
 }
-

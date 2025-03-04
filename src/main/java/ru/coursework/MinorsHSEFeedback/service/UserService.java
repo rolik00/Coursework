@@ -10,7 +10,6 @@ import ru.coursework.MinorsHSEFeedback.db.ui.UiUser;
 import ru.coursework.MinorsHSEFeedback.mapper.UiUserMapper;
 import ru.coursework.MinorsHSEFeedback.repository.UserRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,11 +44,7 @@ public class UserService {
 
     public List<UiUser> findAll() {
         List<User> users = userRepository.findAll();
-        List<UiUser> uiUsers = new ArrayList<>();
-        for (User user : users) {
-            uiUsers.add(uiUserMapper.apply(user));
-        }
-        return uiUsers;
+        return users.stream().map(uiUserMapper::apply).toList();
     }
 
     public Optional<User> findByEmail(String email) {

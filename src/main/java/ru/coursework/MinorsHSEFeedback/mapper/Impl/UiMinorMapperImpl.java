@@ -12,6 +12,7 @@ import ru.coursework.MinorsHSEFeedback.repository.ResultRepository;
 public class UiMinorMapperImpl implements UiMinorMapper {
     @Autowired
     private ResultRepository resultRepository;
+    private static final String BASE_URL = "/minor/";
     @Override
     public UiMinor apply(Minor minor) {
         if (minor == null) {
@@ -40,6 +41,8 @@ public class UiMinorMapperImpl implements UiMinorMapper {
         uiMinor.setInterestRating(interestRating);
         uiMinor.setTimeConsumptionRating(timeConsumptionRating);
         uiMinor.setTotalRating(totalRating);
+
+        uiMinor.setSelfLink(BASE_URL + minor.getId());
 
         return uiMinor;
     }

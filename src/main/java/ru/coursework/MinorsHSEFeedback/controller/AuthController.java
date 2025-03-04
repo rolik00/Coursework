@@ -3,15 +3,16 @@ package ru.coursework.MinorsHSEFeedback.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import ru.coursework.MinorsHSEFeedback.components.EmailSender;
 import ru.coursework.MinorsHSEFeedback.db.User;
+import ru.coursework.MinorsHSEFeedback.db.ui.UiUser;
+import ru.coursework.MinorsHSEFeedback.mapper.UiUserMapper;
 import ru.coursework.MinorsHSEFeedback.request.RegistrationRequest;
 import ru.coursework.MinorsHSEFeedback.request.UpdatePasswordRequest;
 import ru.coursework.MinorsHSEFeedback.service.UserService;
@@ -38,42 +39,40 @@ public class AuthController {
 	@Autowired
 	private EmailSender emailSender;
 
-	private static final Pattern PASSWORD_PATTERN = Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=_])(?=\\S+$).{8,}$");
-	private static final String endLetter = "С уважением,\nКоманда MinorsHSEFeedbacks";
+	@Autowired
+	private UiUserMapper uiUserMapper;
 
-	@GetMapping("/register")
+	private static final Pattern PASSWORD_PATTERN = Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=_])(?=\\S+$).{8,}$");
+
+	/*@GetMapping("/register")
 	public String showRegistrationForm(Model model) {
 		model.addAttribute("user", new User());
 		
 		return "signup_form";
-	}
+	}*/
 
 	@Operation(summary = "Регистрация нового пользователя")
 	@PostMapping("/process_register")
-	public String processRegister(/*@RequestBody*/ @ModelAttribute RegistrationRequest request, Model model) {
+	public ResponseEntity<?> processRegister(@RequestBody RegistrationRequest request) {
 		log.info("invoke processRegister");
 		if (userService.findByEmail(request.getEmail()).isPresent()) {
 			log.error("User = {}, error = {} ", request.getEmail(), IS_EXIST_ERROR.getTitle());
-			model.addAttribute("error", IS_EXIST_ERROR.getTitle());
-			return "error";
+			return ResponseEntity.badRequest().body(IS_EXIST_ERROR.getTitle());
 		}
 
 		if (!request.getEmail().endsWith("@edu.hse.ru")) {
 			log.error("User = {}, error = {} ", request.getEmail(), IS_NOT_HSE_ERROR.getTitle());
-			model.addAttribute("error", IS_NOT_HSE_ERROR.getTitle());
-			return "error";
+			return ResponseEntity.badRequest().body(IS_NOT_HSE_ERROR.getTitle());
 		}
 
 		if (!PASSWORD_PATTERN.matcher(request.getPassword()).matches()) {
 			log.error("User = {}, error = {} ", request.getEmail(), UNRELIABLE_PASSWORD_ERROR.getTitle());
-			model.addAttribute("error", UNRELIABLE_PASSWORD_ERROR.getTitle());
-			return "error";
+			return ResponseEntity.badRequest().body(UNRELIABLE_PASSWORD_ERROR.getTitle());
 		}
 
 		if (!request.getPassword().equals(request.getConfirmPassword())) {
 			log.error("User = {}, error = {} ", request.getEmail(), PASSWORD_NOT_MATCH_ERROR.getTitle());
-			model.addAttribute("error", PASSWORD_NOT_MATCH_ERROR.getTitle());
-			return "error";
+			return ResponseEntity.badRequest().body(PASSWORD_NOT_MATCH_ERROR.getTitle());
 		}
 
 		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
@@ -90,21 +89,21 @@ public class AuthController {
 		String content = BEGIN.getTitle() + user.getName() + REGISTRATION.getTitle() + END.getTitle();
 		emailSender.sendEmail(user.getEmail(), "Регистрация на портале MinorsHSEFeedbacks", content);
 		log.info("Пользователь {} успешно зарегистрирован!", user.getEmail());
-		return "register_success";
+		return ResponseEntity.ok(uiUserMapper.apply(user));
 	}
 
-	@GetMapping("/update_password")
+	/*@GetMapping("/update_password")
 	public String updatePasswordForm() {
 		return "update_password";
-	}
+	}*/
 
 	@Operation(summary = "Обновление пароля")
 	@PostMapping("/update_password")
-	public String updatePassword(/*@RequestBody*/ @ModelAttribute UpdatePasswordRequest request,
-								 Principal principal, Model model) {
+	public ResponseEntity<?> updatePassword(@RequestBody UpdatePasswordRequest request) {
 		log.info("invoke updatePassword");
+		UiUser uiUser = null;
 		try {
-			User user = userService.findByEmail(principal.getName())
+			User user = userService.findByEmail(request.getLogin())
 					.orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
 			BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
@@ -112,40 +111,36 @@ public class AuthController {
 
 			if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
 				log.error("User = {}, error = {} ", user.getEmail(), UNCORRECT_PASSWORD_ERROR.getTitle());
-				model.addAttribute("error", UNCORRECT_PASSWORD_ERROR.getTitle());
-				return "update_password";
+				return ResponseEntity.badRequest().body(UNCORRECT_PASSWORD_ERROR.getTitle());
 			}
 
 			if (passwordEncoder.matches(request.getNewPassword(), user.getPassword())) {
 				log.error("User = {}, error = {} ", user.getEmail(), PASSWORD_MATCH_ERROR.getTitle());
-				model.addAttribute("error", PASSWORD_MATCH_ERROR.getTitle());
-				return "update_password";
+				return ResponseEntity.badRequest().body(PASSWORD_MATCH_ERROR.getTitle());
 			}
 
 			if (!request.getNewPassword().equals(request.getConfirmNewPassword())) {
 				log.error("User = {}, error = {} ", user.getEmail(), PASSWORD_NOT_MATCH_ERROR.getTitle());
-				model.addAttribute("error", PASSWORD_NOT_MATCH_ERROR.getTitle());
-				return "update_password";
+				return ResponseEntity.badRequest().body(PASSWORD_NOT_MATCH_ERROR.getTitle());
 			}
 
 			if(!PASSWORD_PATTERN.matcher(request.getNewPassword()).matches()) {
 				log.error("User = {}, error = {} ", user.getEmail(), UNRELIABLE_PASSWORD_ERROR.getTitle());
-				model.addAttribute("error", UNRELIABLE_PASSWORD_ERROR.getTitle());
-				return "update_password";
+				return ResponseEntity.badRequest().body(UNRELIABLE_PASSWORD_ERROR.getTitle());
 			}
 
 			user.setPassword(encodedPassword);
 			userService.save(user);
+			uiUser = uiUserMapper.apply(user);
 
 			String content = BEGIN.getTitle() + user.getName() + UPDATE_PASSWORD.getTitle() + END.getTitle();
 			emailSender.sendEmail(user.getEmail(), "Обновление пароля на портале MinorsHSEFeedbacks", content);
 			log.info("Пользователь {} изменил пароль", user.getEmail());
 
-			model.addAttribute("message", "Password updated successfully");
 		} catch (Exception e) {
-			log.error("При попытке смены пароля для пользователя {} произошла ошибка {}", principal.getName(), e.getMessage());
-			model.addAttribute("error", e.getMessage());
+			log.error("При попытке смены пароля для пользователя {} произошла ошибка {}", request.getLogin(), e.getMessage());
+			return ResponseEntity.badRequest().body(e.getMessage());
 		}
-		return "update_password";
+		return ResponseEntity.ok(uiUser);
 	}
 }

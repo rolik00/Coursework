@@ -14,4 +14,5 @@ public class UiUser {
     private String minorTitle;
     private String email;
     private float rating;
+    private String selfLink;
 }

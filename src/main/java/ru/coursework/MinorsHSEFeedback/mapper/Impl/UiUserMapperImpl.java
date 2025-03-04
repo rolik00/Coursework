@@ -7,6 +7,7 @@ import ru.coursework.MinorsHSEFeedback.mapper.UiUserMapper;
 
 @Component
 public class UiUserMapperImpl implements UiUserMapper {
+    private static final String BASE_URL = "/user/";
     @Override
     public UiUser apply(User user) {
         if (user == null) {
@@ -20,6 +21,7 @@ public class UiUserMapperImpl implements UiUserMapper {
         uiUser.setMinorTitle(user.getMinorTitle());
         uiUser.setEmail(user.getEmail());
         uiUser.setRating(user.getRating());
+        uiUser.setSelfLink(BASE_URL + user.getId());
 
         return uiUser;
     }
