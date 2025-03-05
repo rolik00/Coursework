@@ -2,9 +2,10 @@ package ru.coursework.MinorsHSEFeedback.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 import ru.coursework.MinorsHSEFeedback.db.ui.UiMinor;
 import ru.coursework.MinorsHSEFeedback.db.ui.UiUser;
 import ru.coursework.MinorsHSEFeedback.enums.Sort;
@@ -16,7 +17,8 @@ import ru.coursework.MinorsHSEFeedback.service.UserService;
 import java.util.List;
 import java.util.Set;
 
-@Controller
+@CrossOrigin(origins = "http://localhost:3000")
+@RestController
 public class MainController {
 
     @Autowired
