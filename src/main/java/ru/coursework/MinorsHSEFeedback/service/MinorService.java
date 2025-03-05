@@ -1,6 +1,7 @@
 package ru.coursework.MinorsHSEFeedback.service;
 
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.coursework.MinorsHSEFeedback.db.Minor;
@@ -17,6 +18,7 @@ import java.util.Set;
 
 @Service
 @Transactional
+@Slf4j
 public class MinorService {
     @Autowired
     private MinorRepository minorRepository;
@@ -30,6 +32,7 @@ public class MinorService {
 
     public List<UiMinor> findAllMinors() {
         List<Minor> minors = minorRepository.findAll();
+        log.info("invoke findAll");
         return minors.stream().map(uiMinorMapper::apply).toList();
     }
 
