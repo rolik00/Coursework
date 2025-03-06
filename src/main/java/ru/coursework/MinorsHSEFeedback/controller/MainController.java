@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.coursework.MinorsHSEFeedback.db.ui.UiMinor;
 import ru.coursework.MinorsHSEFeedback.db.ui.UiUser;
@@ -17,8 +18,8 @@ import ru.coursework.MinorsHSEFeedback.service.UserService;
 import java.util.List;
 import java.util.Set;
 
-@CrossOrigin(origins = "http://localhost:3000")
 @RestController
+@RequestMapping("/api")
 public class MainController {
 
     @Autowired
