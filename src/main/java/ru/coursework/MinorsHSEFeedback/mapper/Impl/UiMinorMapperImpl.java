@@ -12,7 +12,6 @@ import ru.coursework.MinorsHSEFeedback.repository.ResultRepository;
 public class UiMinorMapperImpl implements UiMinorMapper {
     @Autowired
     private ResultRepository resultRepository;
-    private static final String BASE_URL = "/minor/";
     @Override
     public UiMinor apply(Minor minor) {
         if (minor == null) {
@@ -23,6 +22,7 @@ public class UiMinorMapperImpl implements UiMinorMapper {
         uiMinor.setId(minor.getId());
         uiMinor.setCategoryId(minor.getCategoryId());
         uiMinor.setTitle(minor.getTitle());
+        uiMinor.setLink(minor.getLink());
 
         Result result = resultRepository.findByMinorId(minor.getId()).orElseThrow();
         float difficultyRating = 0;
@@ -41,8 +41,6 @@ public class UiMinorMapperImpl implements UiMinorMapper {
         uiMinor.setInterestRating(interestRating);
         uiMinor.setTimeConsumptionRating(timeConsumptionRating);
         uiMinor.setTotalRating(totalRating);
-
-        uiMinor.setSelfLink(BASE_URL + minor.getId());
 
         return uiMinor;
     }

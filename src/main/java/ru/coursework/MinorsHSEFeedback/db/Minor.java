@@ -23,4 +23,6 @@ public class Minor {
     private Long categoryId;
     @Column(nullable = false, unique = true)
     private String title;
+    @Column(nullable = false, unique = true)
+    private String link;
 }
