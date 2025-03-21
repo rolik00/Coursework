@@ -9,6 +9,7 @@ import ru.coursework.MinorsHSEFeedback.db.ui.UiMinor;
 import ru.coursework.MinorsHSEFeedback.mapper.UiMinorMapper;
 import ru.coursework.MinorsHSEFeedback.repository.MinorRepository;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -43,15 +44,15 @@ public class MinorService {
 
     public List<UiMinor> findSortedAllMinors(Comparator<UiMinor> comparator) {
         List<Minor> minors = minorRepository.findAll();
-        List<UiMinor> uiMinors = minors.stream().map(uiMinorMapper::apply).toList();
-        Collections.sort(uiMinors, comparator);
+        List<UiMinor> uiMinors = new ArrayList<>(minors.stream().map(uiMinorMapper::apply).toList());
+        uiMinors.sort(comparator);
         return uiMinors;
     }
 
     public List<UiMinor> findSortedAllMinorsByCategoryIds(Set<Long> categoryIds, Comparator<UiMinor> comparator) {
         List<Minor> minors = minorRepository.findAllByCategoryIds(categoryIds);
-        List<UiMinor> uiMinors = minors.stream().map(uiMinorMapper::apply).toList();
-        Collections.sort(uiMinors, comparator);
+        List<UiMinor> uiMinors = new ArrayList<>(minors.stream().map(uiMinorMapper::apply).toList());
+        uiMinors.sort(comparator);
         return uiMinors;
     }
 
