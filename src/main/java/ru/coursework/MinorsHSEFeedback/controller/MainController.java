@@ -49,14 +49,14 @@ public class MainController {
     }
 
     @Operation(summary = "Получить все майноры заданным категориям")
-    @PostMapping("/categories")
-    public List<UiMinor> getMinorsByCategory(@RequestBody Set<Long> categoryIds) {
+    @GetMapping("/categories")
+    public List<UiMinor> getMinorsByCategory(@RequestParam(name = "categoryIds")  Set<Long> categoryIds) {
         return minorService.findAllMinorsByCategoryIds(categoryIds);
     }
 
     @Operation(summary = "Отсортировать все полученные майноры по одному из рейтингов")
-    @PostMapping("/minors_sort")
-    public List<UiMinor> getSortMinors(@RequestBody String comparator) {
+    @GetMapping("/minors_sort")
+    public List<UiMinor> getSortMinors(@RequestParam(name = "comparator") String comparator) {
         return minorService.findSortedAllMinors(Sort.valueOf(comparator).getComparator());
     }
 
@@ -65,13 +65,13 @@ public class MainController {
     public List<UiMinor> getSortMinorsByCategory(
             @RequestParam(name = "categoryIds") Set<Long> categoryIds,
             @RequestParam(name = "comparator") String comparator) {
-        log.info("getSortMinorsByCategory {}", categoryIds);
         return minorService.findSortedAllMinorsByCategoryIds(categoryIds, Sort.valueOf(comparator).getComparator());
     }
 
     @Operation(summary = "Получить майноры по id для сравнительной таблицы")
-    @PostMapping("/comparison_table")
-    public List<UiMinor> getMinorsForComparisonTable(@RequestBody MinorsForCTRequest request) {
-        return minorService.getMinorsForComparisonTable(request.getIds());
+    @GetMapping("/comparison_table")
+    public List<UiMinor> getMinorsForComparisonTable(
+            @RequestParam(name = "ids") Set<Long> ids) {
+        return minorService.getMinorsForComparisonTable(ids);
     }
 }
