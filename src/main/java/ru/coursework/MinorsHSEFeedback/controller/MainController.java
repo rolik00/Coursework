@@ -1,8 +1,8 @@
 package ru.coursework.MinorsHSEFeedback.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,6 +20,7 @@ import java.util.Set;
 
 @RestController
 @RequestMapping("/api")
+@Slf4j
 public class MainController {
 
     @Autowired
@@ -59,6 +60,7 @@ public class MainController {
     @Operation(summary = "Отсортировать все полученные по заданным категориям майноры")
     @GetMapping("/categories_sort")
     public List<UiMinor> getSortMinorsByCategory(@RequestBody SortAllMinorsByCategoriesRequest request) {
+        log.info("getSortMinorsByCategory {}", request);
         return minorService.findSortedAllMinorsByCategoryIds(request.getCategoryIds(), Sort.valueOf(request.getComparator()).getComparator());
     }
 
