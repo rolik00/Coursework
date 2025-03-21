@@ -1,12 +1,14 @@
 package ru.coursework.MinorsHSEFeedback.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.coursework.MinorsHSEFeedback.db.ui.UiMinor;
 import ru.coursework.MinorsHSEFeedback.db.ui.UiUser;
@@ -59,10 +61,12 @@ public class MainController {
     }
 
     @Operation(summary = "Отсортировать все полученные по заданным категориям майноры")
-    @PostMapping("/categories_sort")
-    public List<UiMinor> getSortMinorsByCategory(@RequestBody SortAllMinorsByCategoriesRequest request) {
-        log.info("getSortMinorsByCategory {}", request);
-        return minorService.findSortedAllMinorsByCategoryIds(request.getCategoryIds(), Sort.valueOf(request.getComparator()).getComparator());
+    @GetMapping("/categories_sort")
+    public List<UiMinor> getSortMinorsByCategory(
+            @RequestParam(name = "categoryIds") Set<Long> categoryIds,
+            @RequestParam(name = "comparator") String comparator) {
+        log.info("getSortMinorsByCategory {}", categoryIds);
+        return minorService.findSortedAllMinorsByCategoryIds(categoryIds, Sort.valueOf(comparator).getComparator());
     }
 
     @Operation(summary = "Получить майноры по id для сравнительной таблицы")
