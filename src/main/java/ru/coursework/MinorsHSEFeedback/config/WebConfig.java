@@ -14,6 +14,8 @@ public class WebConfig implements WebMvcConfigurer {
         var allHttpMethods = Arrays.stream(HttpMethod.values()).map(HttpMethod::name).toList();
         registry.addMapping("/**")
                 .allowedOrigins("http://localhost:3000","http://localhost:3001","http://localhost:3002")
-                .allowedMethods("GET", "POST", "PUT", "PATCH", "TRACE", "DELETE", "OPTIONS");
+                .allowedMethods("GET", "POST", "PUT", "PATCH", "TRACE", "DELETE", "OPTIONS")
+                .allowedHeaders("*")
+                .allowCredentials(true);
     }
 }
