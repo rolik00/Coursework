@@ -1,20 +1,15 @@
 package ru.coursework.MinorsHSEFeedback.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.coursework.MinorsHSEFeedback.db.ui.UiMinor;
 import ru.coursework.MinorsHSEFeedback.db.ui.UiUser;
 import ru.coursework.MinorsHSEFeedback.enums.Sort;
-import ru.coursework.MinorsHSEFeedback.request.MinorsForCTRequest;
-import ru.coursework.MinorsHSEFeedback.request.SortAllMinorsByCategoriesRequest;
 import ru.coursework.MinorsHSEFeedback.service.MinorService;
 import ru.coursework.MinorsHSEFeedback.service.UserService;
 

@@ -53,7 +53,7 @@ public class ForgotPasswordController {
 
         try {
             userService.updateResetPasswordToken(token, request.getEmail());
-            String resetPasswordLink = BASE_URL + "/reset_password?token=" + token;
+            String resetPasswordLink = BASE_URL + "/reset_password?token=" + token;  //скорректировать ссылку для перебрасывания пользователя
             String userName = userService.findByEmail(request.getEmail())
                     .orElseThrow(() -> new UsernameNotFoundException("User not found"))
                     .getName();

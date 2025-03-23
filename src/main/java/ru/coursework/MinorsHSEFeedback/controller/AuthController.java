@@ -17,7 +17,6 @@ import ru.coursework.MinorsHSEFeedback.request.RegistrationRequest;
 import ru.coursework.MinorsHSEFeedback.request.UpdatePasswordRequest;
 import ru.coursework.MinorsHSEFeedback.service.UserService;
 
-import java.security.Principal;
 import java.util.regex.Pattern;
 
 import static ru.coursework.MinorsHSEFeedback.enums.Errors.IS_EXIST_ERROR;
