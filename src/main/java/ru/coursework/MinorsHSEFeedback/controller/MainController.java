@@ -26,11 +26,6 @@ public class MainController {
     @Autowired
     private MinorService minorService;
 
-    @GetMapping("")
-    public Integer viewHomePage() {
-        return 1;
-    }
-
     @Operation(summary = "Получить всех пользователей")
     @GetMapping("/users")
     public List<UiUser> listUsers() {

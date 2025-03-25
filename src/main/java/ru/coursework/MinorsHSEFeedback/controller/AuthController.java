@@ -43,13 +43,6 @@ public class AuthController {
 
 	private static final Pattern PASSWORD_PATTERN = Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=_])(?=\\S+$).{8,}$");
 
-	/*@GetMapping("/register")
-	public String showRegistrationForm(Model model) {
-		model.addAttribute("user", new User());
-		
-		return "signup_form";
-	}*/
-
 	@Operation(summary = "Регистрация нового пользователя")
 	@PostMapping("/process_register")
 	public ResponseEntity<?> processRegister(@RequestBody RegistrationRequest request) {
@@ -91,13 +84,8 @@ public class AuthController {
 		return ResponseEntity.ok(uiUserMapper.apply(user));
 	}
 
-	/*@GetMapping("/update_password")
-	public String updatePasswordForm() {
-		return "update_password";
-	}*/
-
 	@Operation(summary = "Обновление пароля")
-	@PostMapping("/update_password")
+	@PostMapping("update_password")
 	public ResponseEntity<?> updatePassword(@RequestBody UpdatePasswordRequest request) {
 		log.info("invoke updatePassword");
 		UiUser uiUser = null;

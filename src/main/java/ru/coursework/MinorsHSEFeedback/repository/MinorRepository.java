@@ -15,4 +15,7 @@ public interface MinorRepository extends JpaRepository<Minor, Long> {
 
     @Query("SELECT m FROM Minor m WHERE m.categoryId IN :categoryIds")
     List<Minor> findAllByCategoryIds(@Param("categoryIds") Set<Long> categoryIds);
+
+    @Query("SELECT m.id FROM Minor m WHERE m.title = :title")
+    Long findByTitle(@Param("title") String title);
 }

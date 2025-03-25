@@ -58,13 +58,13 @@ public class WebSecurityConfig {
 		http.csrf(csrf -> csrf.disable());
 
 		http.authorizeHttpRequests(auth ->
-				auth.requestMatchers("/users").authenticated()
+				auth.requestMatchers("/user/**").authenticated()
 						.anyRequest().permitAll()
 		);
 
 		http.formLogin(login ->
 				login.usernameParameter("email")
-						.defaultSuccessUrl("/users")
+						.defaultSuccessUrl("/api/minors")
 						.permitAll()
 		);
 

@@ -40,11 +40,6 @@ public class ForgotPasswordController {
 
     private static final Pattern PASSWORD_PATTERN = Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=_])(?=\\S+$).{8,}$");
 
-    /*@GetMapping("/forgot_password")
-    public String showForgotPasswordForm() {
-        return "forgot_password_form";
-    }*/
-
     @Operation(summary = "Отправка временного токена на почту")
     @PostMapping("/forgot_password")
     public ResponseEntity<String> processForgotPassword(@RequestBody ForgotPasswordRequest request) {
@@ -70,19 +65,6 @@ public class ForgotPasswordController {
 
         return ResponseEntity.ok("Токен успешно отправлен на почту");
     }
-
-    /*@GetMapping("/reset_password")
-    public String showResetPasswordForm(@Param(value = "token") String token, Model model) {
-        User user = userService.getByResetPasswordToken(token);
-        model.addAttribute("token", token);
-
-        if (user == null) {
-            model.addAttribute("message", "Invalid Token");
-            return "message";
-        }
-
-        return "reset_password_form";
-    }*/
 
     @Operation(summary = "Восстановление пароля")
     @PostMapping("/reset_password")
