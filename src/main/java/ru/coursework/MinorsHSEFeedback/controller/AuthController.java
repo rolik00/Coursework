@@ -6,9 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 import ru.coursework.MinorsHSEFeedback.components.EmailSender;
 import ru.coursework.MinorsHSEFeedback.db.User;
 import ru.coursework.MinorsHSEFeedback.db.ui.UiUser;
@@ -30,7 +30,7 @@ import static ru.coursework.MinorsHSEFeedback.enums.Letters.END;
 import static ru.coursework.MinorsHSEFeedback.enums.Letters.REGISTRATION;
 import static ru.coursework.MinorsHSEFeedback.enums.Letters.UPDATE_PASSWORD;
 
-@Controller
+@RestController
 @Slf4j
 public class AuthController {
 	@Autowired

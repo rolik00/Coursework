@@ -5,9 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 import ru.coursework.MinorsHSEFeedback.components.EmailSender;
 import ru.coursework.MinorsHSEFeedback.db.User;
 import ru.coursework.MinorsHSEFeedback.extraFunctions.RandomString;
@@ -25,7 +25,7 @@ import static ru.coursework.MinorsHSEFeedback.enums.Letters.END;
 import static ru.coursework.MinorsHSEFeedback.enums.Letters.RESET_PASSWORD_1;
 import static ru.coursework.MinorsHSEFeedback.enums.Letters.RESET_PASSWORD_2;
 
-@Controller
+@RestController
 @Slf4j
 public class ForgotPasswordController {
     @Autowired
