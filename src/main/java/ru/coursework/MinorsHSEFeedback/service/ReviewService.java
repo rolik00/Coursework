@@ -1,6 +1,6 @@
 package ru.coursework.MinorsHSEFeedback.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,19 +15,16 @@ import ru.coursework.MinorsHSEFeedback.repository.ReviewRepository;
 import ru.coursework.MinorsHSEFeedback.request.CreateReviewRequest;
 import ru.coursework.MinorsHSEFeedback.request.UpdateReviewRequest;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class ReviewService {
-    @Autowired
-    private ReviewRepository reviewRepository;
-    @Autowired
-    private ResultRepository resultRepository;
-    @Autowired
-    private MinorRepository minorRepository;
-    @Autowired
-    private UserService userService;
+    private final ReviewRepository reviewRepository;
+    private final ResultRepository resultRepository;
+    private final MinorRepository minorRepository;
+    private final UserService userService;
     @Transactional
     public UiReview createReview(CreateReviewRequest request) {
         checkCanCreateReview(request.getEmail());
@@ -41,7 +38,7 @@ public class ReviewService {
                 .interestMark(request.getInterestMark())
                 .timeConsumptionMark(request.getTimeConsumptionMark())
                 .totalMark(request.getTotalMark())
-                .createDate(LocalDateTime.now())
+                .createDate(LocalDate.now())
                 .build();
         reviewRepository.save(review);
         user.setCount(user.getCount() + 1);
@@ -54,12 +51,12 @@ public class ReviewService {
         result.setTotalMarkSum(result.getTotalMarkSum() + request.getTotalMark());
         resultRepository.save(result);
 
-        return new UiReview(user.getName(), request.getMinorTitle(), request.getBody(), request.getDifficultyMark(), request.getInterestMark(),
+        return new UiReview(review.getId(), user.getName(), request.getMinorTitle(), request.getBody(), request.getDifficultyMark(), request.getInterestMark(),
                     request.getTimeConsumptionMark(), request.getTotalMark(), review.getCreateDate());
     }
 
     @Transactional
-    public UiReview updateReview(UpdateReviewRequest request){
+    public UiReview updateReview(UpdateReviewRequest request) {
         checkCanUpdateOrDeleteReview(request.getReviewId(), request.getEmail());
         Review review = reviewRepository.findById(request.getReviewId())
                 .orElseThrow(() -> new ReviewException("Review not found"));
@@ -91,7 +88,7 @@ public class ReviewService {
         resultRepository.save(result);
         String title = minorRepository.findById(review.getMinorId()).orElseThrow().getTitle();
         String userName = userService.findByEmail(request.getEmail()).orElseThrow().getName();
-        return new UiReview(userName, title, review.getBody(), review.getDifficultyMark(), review.getInterestMark(),
+        return new UiReview(review.getId(), userName, title, review.getBody(), review.getDifficultyMark(), review.getInterestMark(),
                 review.getTimeConsumptionMark(), review.getTotalMark(), review.getCreateDate());
     }
 
@@ -112,6 +109,7 @@ public class ReviewService {
         userService.save(user);
         resultRepository.save(result);
         reviewRepository.delete(review);
+        //TO DO: удалить инфу о лайках и комментах
         return true;
     }
 

@@ -9,14 +9,10 @@ import java.time.LocalDate;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UiReview {
+public class UiComment {
     private Long id;
-    private String userName;
-    private String minorTitle;
     private String body;
-    private int difficultyMark;
-    private int interestMark;
-    private int timeConsumptionMark;
-    private int totalMark;
+    private Long reviewId;
+    private String userName;
     private LocalDate createDate;
 }

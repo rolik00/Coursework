@@ -10,6 +10,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Entity
 @Data
 @AllArgsConstructor
@@ -25,4 +27,6 @@ public class Comment {
     private Long reviewId;
     @Column(nullable = false)
     private Long userId;
+    @Column(nullable = false)
+    private LocalDate createDate;
 }

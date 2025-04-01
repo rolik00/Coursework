@@ -11,7 +11,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Data
@@ -40,5 +40,5 @@ public class Review {
     @Column(nullable = false)
     private float value = 0;
     @Column(nullable = false)
-    private LocalDateTime createDate;
+    private LocalDate createDate;
 }

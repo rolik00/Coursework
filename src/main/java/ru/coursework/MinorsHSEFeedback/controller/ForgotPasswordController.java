@@ -1,8 +1,8 @@
 package ru.coursework.MinorsHSEFeedback.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,18 +25,16 @@ import static ru.coursework.MinorsHSEFeedback.enums.Letters.END;
 import static ru.coursework.MinorsHSEFeedback.enums.Letters.RESET_PASSWORD_1;
 import static ru.coursework.MinorsHSEFeedback.enums.Letters.RESET_PASSWORD_2;
 
-@RestController
 @Slf4j
+@RestController
+@RequiredArgsConstructor
 public class ForgotPasswordController {
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private EmailSender emailSender;
-    @Autowired
-    private UiUserMapper uiUserMapper;
+    private final UserService userService;
+    private final EmailSender emailSender;
+    private final UiUserMapper uiUserMapper;
 
     private RandomString randomString = new RandomString();
-    private static String BASE_URL = "http://localhost:8080";
+    private static final String BASE_URL = "http://localhost:8080";
 
     private static final Pattern PASSWORD_PATTERN = Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=_])(?=\\S+$).{8,}$");
 

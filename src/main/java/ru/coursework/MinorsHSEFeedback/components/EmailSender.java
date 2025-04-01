@@ -1,5 +1,6 @@
 package ru.coursework.MinorsHSEFeedback.components;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +14,7 @@ import javax.mail.internet.MimeMessage;
 import java.util.Properties;
 
 @Component
+@Slf4j
 public class EmailSender {
 
     @Value("${email.host}")
@@ -55,9 +57,10 @@ public class EmailSender {
 
             Transport.send(message);
 
-            System.out.println("Email sent successfully!"); // заменить на лог потом
+            log.info("Email sent successfully!");
 
         } catch (MessagingException e) {
+            log.error("Email sent error {}", e.getMessage());
             e.printStackTrace();
         }
     }

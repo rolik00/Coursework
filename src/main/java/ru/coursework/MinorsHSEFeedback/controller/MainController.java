@@ -1,10 +1,8 @@
 package ru.coursework.MinorsHSEFeedback.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.coursework.MinorsHSEFeedback.db.ui.UiMinor;
@@ -17,14 +15,10 @@ import java.util.List;
 import java.util.Set;
 
 @RestController
-@RequestMapping("/api")
-@Slf4j
+@RequiredArgsConstructor
 public class MainController {
-
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private MinorService minorService;
+    private final UserService userService;
+    private final MinorService minorService;
 
     @Operation(summary = "Получить всех пользователей")
     @GetMapping("/users")

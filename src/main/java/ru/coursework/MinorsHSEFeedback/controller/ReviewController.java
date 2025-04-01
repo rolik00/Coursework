@@ -1,24 +1,31 @@
 package ru.coursework.MinorsHSEFeedback.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import ru.coursework.MinorsHSEFeedback.db.ui.UiComment;
 import ru.coursework.MinorsHSEFeedback.db.ui.UiReview;
+import ru.coursework.MinorsHSEFeedback.request.CreateCommentRequest;
 import ru.coursework.MinorsHSEFeedback.request.CreateReviewRequest;
-import ru.coursework.MinorsHSEFeedback.request.DeleteReviewRequest;
+import ru.coursework.MinorsHSEFeedback.request.DeleteReviewOrCommentRequest;
+import ru.coursework.MinorsHSEFeedback.request.UpdateCommentRequest;
 import ru.coursework.MinorsHSEFeedback.request.UpdateReviewRequest;
+import ru.coursework.MinorsHSEFeedback.service.CommentService;
 import ru.coursework.MinorsHSEFeedback.service.ReviewService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/minor")
+@RequiredArgsConstructor
 public class ReviewController {
-    @Autowired
-    private ReviewService reviewService;
+    private final ReviewService reviewService;
+    private final CommentService commentService;
 
     @Operation(summary = "Создать отзыв на майнор")
     @PostMapping("/review")
@@ -34,7 +41,29 @@ public class ReviewController {
 
     @Operation(summary = "Удалить отзыв на майнор")
     @DeleteMapping("/review")
-    public boolean deleteReview(@RequestBody DeleteReviewRequest request) {
-        return reviewService.deleteReview(request.getReviewId(), request.getEmail());
+    public boolean deleteReview(@RequestBody DeleteReviewOrCommentRequest request) {
+        return reviewService.deleteReview(request.getId(), request.getEmail());
+    }
+
+    /*@Operation(summary = "Получить отзывы на майнор")
+    @GetMapping("/review")
+    public List<UiReview> getReviews(){}*/
+
+    @Operation(summary = "Создать комментарий на майнор")
+    @PostMapping("/review/comment")
+    public UiComment createComment(@RequestBody CreateCommentRequest request) {
+        return commentService.createReview(request);
+    }
+
+    @Operation(summary = "Обновить отзыв на майнор")
+    @PatchMapping("/review/comment")
+    public UiComment updateComment(@RequestBody UpdateCommentRequest request) {
+        return commentService.updateReview(request);
+    }
+
+    @Operation(summary = "Удалить отзыв на майнор")
+    @DeleteMapping("/review/comment")
+    public boolean deleteComment(@RequestBody DeleteReviewOrCommentRequest request) {
+        return commentService.deleteComment(request.getId(), request.getEmail());
     }
 }

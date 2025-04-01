@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class DeleteReviewRequest {
-    private Long reviewId;
+public class DeleteReviewOrCommentRequest {
+    private Long id;
     private String email;
 }

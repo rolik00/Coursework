@@ -1,8 +1,8 @@
 package ru.coursework.MinorsHSEFeedback.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -30,16 +30,13 @@ import static ru.coursework.MinorsHSEFeedback.enums.Letters.END;
 import static ru.coursework.MinorsHSEFeedback.enums.Letters.REGISTRATION;
 import static ru.coursework.MinorsHSEFeedback.enums.Letters.UPDATE_PASSWORD;
 
-@RestController
 @Slf4j
+@RestController
+@RequiredArgsConstructor
 public class AuthController {
-	@Autowired
-	private UserService userService;
-	@Autowired
-	private EmailSender emailSender;
-
-	@Autowired
-	private UiUserMapper uiUserMapper;
+	private final UserService userService;
+	private final EmailSender emailSender;
+	private final UiUserMapper uiUserMapper;
 
 	private static final Pattern PASSWORD_PATTERN = Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=_])(?=\\S+$).{8,}$");
 
