@@ -8,11 +8,14 @@ import ru.coursework.MinorsHSEFeedback.db.Comment;
 import ru.coursework.MinorsHSEFeedback.db.User;
 import ru.coursework.MinorsHSEFeedback.db.ui.UiComment;
 import ru.coursework.MinorsHSEFeedback.exceptions.CommentException;
+import ru.coursework.MinorsHSEFeedback.mapper.UiCommentMapper;
 import ru.coursework.MinorsHSEFeedback.repository.CommentRepository;
 import ru.coursework.MinorsHSEFeedback.request.CreateCommentRequest;
 import ru.coursework.MinorsHSEFeedback.request.UpdateCommentRequest;
 
 import java.time.LocalDate;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -20,8 +23,9 @@ import java.time.LocalDate;
 public class CommentService {
     private final CommentRepository commentRepository;
     private final UserService userService;
+    private final UiCommentMapper commentMapper;
     @Transactional
-    public UiComment createReview(CreateCommentRequest request) {
+    public UiComment createComment(CreateCommentRequest request) {
         User user = userService.findByEmail(request.getEmail())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         Comment comment = new Comment();
@@ -35,8 +39,8 @@ public class CommentService {
     }
 
     @Transactional
-    public UiComment updateReview(UpdateCommentRequest request) {
-        checkCanUpdateOrDeleteReview(request.getId(), request.getEmail());
+    public UiComment updateComment(UpdateCommentRequest request) {
+        checkCanUpdateOrDeleteComment(request.getId(), request.getEmail());
         Comment comment = commentRepository.findById(request.getId())
                 .orElseThrow(() -> new CommentException("Comment not found"));
         comment.setBody(request.getBody());
@@ -49,7 +53,7 @@ public class CommentService {
 
     @Transactional
     public boolean deleteComment(Long id, String email) {
-        checkCanUpdateOrDeleteReview(id, email);
+        checkCanUpdateOrDeleteComment(id, email);
         Comment comment = commentRepository.findById(id)
                 .orElseThrow(() -> new CommentException("Comment not found"));
         commentRepository.delete(comment);
@@ -57,7 +61,13 @@ public class CommentService {
         return true;
     }
 
-    private void checkCanUpdateOrDeleteReview(Long id, String email) {
+    @Transactional(readOnly = true)
+    public Set<UiComment> getComments(Long reviewId) {
+        Set<Comment> comments = commentRepository.getComments(reviewId);
+        return comments.stream().map(commentMapper::apply).collect(Collectors.toSet());
+    }
+
+    private void checkCanUpdateOrDeleteComment(Long id, String email) {
         User user = userService.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         Comment comment = commentRepository.findById(id)
