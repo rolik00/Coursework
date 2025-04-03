@@ -5,11 +5,14 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.coursework.MinorsHSEFeedback.db.Comment;
+import ru.coursework.MinorsHSEFeedback.db.Review;
 import ru.coursework.MinorsHSEFeedback.db.User;
 import ru.coursework.MinorsHSEFeedback.db.ui.UiComment;
 import ru.coursework.MinorsHSEFeedback.exceptions.CommentException;
+import ru.coursework.MinorsHSEFeedback.exceptions.ReviewException;
 import ru.coursework.MinorsHSEFeedback.mapper.UiCommentMapper;
 import ru.coursework.MinorsHSEFeedback.repository.CommentRepository;
+import ru.coursework.MinorsHSEFeedback.repository.ReviewRepository;
 import ru.coursework.MinorsHSEFeedback.request.CreateCommentRequest;
 import ru.coursework.MinorsHSEFeedback.request.UpdateCommentRequest;
 
@@ -22,6 +25,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CommentService {
     private final CommentRepository commentRepository;
+    private final ReviewRepository reviewRepository;
     private final UserService userService;
     private final UiCommentMapper commentMapper;
     @Transactional
@@ -34,7 +38,10 @@ public class CommentService {
         comment.setBody(request.getBody());
         comment.setCreateDate(LocalDate.now());
         commentRepository.save(comment);
-        //пересчет value для отзыва
+        Review review = reviewRepository.findById(request.getReviewId())
+                .orElseThrow(() -> new ReviewException("Review not found"));
+        review.setCommentValue(setCommentValue(request.getReviewId(), review.getMinorId()));
+        reviewRepository.save(review);
         return new UiComment(comment.getId(), comment.getBody(), comment.getReviewId(), user.getName(), comment.getCreateDate());
     }
 
@@ -47,7 +54,6 @@ public class CommentService {
         commentRepository.save(comment);
         String userName = userService.findByEmail(request.getEmail())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found")).getName();
-        //пересчет value для отзыва
         return new UiComment(comment.getId(), comment.getBody(), comment.getReviewId(), userName, comment.getCreateDate());
     }
 
@@ -57,7 +63,10 @@ public class CommentService {
         Comment comment = commentRepository.findById(id)
                 .orElseThrow(() -> new CommentException("Comment not found"));
         commentRepository.delete(comment);
-        //пересчет value для отзыва
+        Review review = reviewRepository.findById(comment.getReviewId())
+                .orElseThrow(() -> new ReviewException("Review not found"));
+        review.setCommentValue(setCommentValue(comment.getReviewId(), review.getMinorId()));
+        reviewRepository.save(review);
         return true;
     }
 
@@ -75,5 +84,11 @@ public class CommentService {
         if(!comment.getUserId().equals(user.getId())) {
             throw new CommentException("Текущий пользователь не является создателем данного комментария");
         }
+    }
+    private float setCommentValue(Long reviewId, Long minorId) {
+        int tmpComment = commentRepository.countCommentsByReviewIds(Set.of(reviewId));
+        Set<Long> reviewIds = reviewRepository.getReviewIds(minorId);
+        int totalComment = commentRepository.countCommentsByReviewIds(reviewIds);
+        return (float) tmpComment / totalComment;
     }
 }

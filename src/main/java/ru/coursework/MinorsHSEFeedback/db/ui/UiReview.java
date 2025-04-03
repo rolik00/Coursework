@@ -19,4 +19,8 @@ public class UiReview {
     private int timeConsumptionMark;
     private int totalMark;
     private LocalDate createDate;
+    private int commentsCount;
+    private int likesCount;
+    private int dislikesCount;
+    private float value;
 }

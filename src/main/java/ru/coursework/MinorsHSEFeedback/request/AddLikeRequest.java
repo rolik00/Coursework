@@ -5,12 +5,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Set;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class MinorsForCTRequest {
+public class AddLikeRequest {
     @NotNull
-    Set<Long> ids;
+    private boolean value;
+    @NotNull
+    private Long reviewId;
+    @NotNull
+    private String email;
 }

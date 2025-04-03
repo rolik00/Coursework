@@ -9,6 +9,9 @@ import ru.coursework.MinorsHSEFeedback.db.Review;
 import ru.coursework.MinorsHSEFeedback.db.User;
 import ru.coursework.MinorsHSEFeedback.db.ui.UiReview;
 import ru.coursework.MinorsHSEFeedback.exceptions.ReviewException;
+import ru.coursework.MinorsHSEFeedback.mapper.UiReviewMapper;
+import ru.coursework.MinorsHSEFeedback.repository.CommentRepository;
+import ru.coursework.MinorsHSEFeedback.repository.LikeRepository;
 import ru.coursework.MinorsHSEFeedback.repository.MinorRepository;
 import ru.coursework.MinorsHSEFeedback.repository.ResultRepository;
 import ru.coursework.MinorsHSEFeedback.repository.ReviewRepository;
@@ -16,6 +19,10 @@ import ru.coursework.MinorsHSEFeedback.request.CreateReviewRequest;
 import ru.coursework.MinorsHSEFeedback.request.UpdateReviewRequest;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
 
 @Service
 @Transactional
@@ -24,7 +31,13 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final ResultRepository resultRepository;
     private final MinorRepository minorRepository;
+    private final LikeRepository likeRepository;
+    private final CommentRepository commentRepository;
+    private final UiReviewMapper reviewMapper;
     private final UserService userService;
+
+    private final Comparator<UiReview> comparatorByValue = (r1, r2) -> Float.compare(r2.getValue(), r1.getValue());
+    private final Comparator<UiReview> comparatorByDate = Comparator.comparing(UiReview::getCreateDate);
     @Transactional
     public UiReview createReview(CreateReviewRequest request) {
         checkCanCreateReview(request.getEmail());
@@ -51,8 +64,7 @@ public class ReviewService {
         result.setTotalMarkSum(result.getTotalMarkSum() + request.getTotalMark());
         resultRepository.save(result);
 
-        return new UiReview(review.getId(), user.getName(), request.getMinorTitle(), request.getBody(), request.getDifficultyMark(), request.getInterestMark(),
-                    request.getTimeConsumptionMark(), request.getTotalMark(), review.getCreateDate());
+        return reviewMapper.apply(review);
     }
 
     @Transactional
@@ -86,10 +98,7 @@ public class ReviewService {
         }
         reviewRepository.save(review);
         resultRepository.save(result);
-        String title = minorRepository.findById(review.getMinorId()).orElseThrow().getTitle();
-        String userName = userService.findByEmail(request.getEmail()).orElseThrow().getName();
-        return new UiReview(review.getId(), userName, title, review.getBody(), review.getDifficultyMark(), review.getInterestMark(),
-                review.getTimeConsumptionMark(), review.getTotalMark(), review.getCreateDate());
+        return reviewMapper.apply(review);
     }
 
     @Transactional
@@ -109,8 +118,25 @@ public class ReviewService {
         userService.save(user);
         resultRepository.save(result);
         reviewRepository.delete(review);
-        //TO DO: удалить инфу о лайках и комментах
+        likeRepository.deleteByReviewId(review.getId());
+        commentRepository.deleteByReviewId(review.getId());
         return true;
+    }
+
+    @Transactional(readOnly = true)
+    public List<UiReview> getReviews(Long minorId) {
+        Set<Review> reviews = reviewRepository.getReviews(minorId);
+        List<UiReview> uiReviews = new ArrayList<>(reviews.stream().map(reviewMapper::apply).toList());
+        uiReviews.sort(comparatorByValue);
+        return uiReviews;
+    }
+
+    @Transactional(readOnly = true)
+    public List<UiReview> getReviewsSortByDate(Long minorId) {
+        Set<Review> reviews = reviewRepository.getReviews(minorId);
+        List<UiReview> uiReviews = new ArrayList<>(reviews.stream().map(reviewMapper::apply).toList());
+        uiReviews.sort(comparatorByDate);
+        return uiReviews;
     }
 
     private void checkCanCreateReview(String email) {
