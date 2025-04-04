@@ -42,7 +42,7 @@ public class UiReviewMapperImpl implements UiReviewMapper {
         uiReview.setCommentsCount(commentRepository.countCommentsByReviewIds(Set.of(review.getId())));
         uiReview.setLikesCount(likeRepository.getCountLikesByReviewIds(Set.of(review.getId())));
         uiReview.setDislikesCount(likeRepository.getCountDislikesByReviewIds(Set.of(review.getId())));
-        uiReview.setValue(review.getLikeValue() + review.getCommentValue());
+        uiReview.setValue(review.getValue());
         return uiReview;
     }
 }

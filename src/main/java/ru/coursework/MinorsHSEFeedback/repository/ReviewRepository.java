@@ -17,4 +17,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     @Query("SELECT r.id FROM Review r WHERE r.minorId = :minorId")
     Set<Long> getReviewIds(@Param("minorId") Long minorId);
+
+    @Query("SELECT r FROM Review r WHERE r.userId = :userId AND r.minorId = :minorId")
+    Optional<Review> findReviewByUserIdAndMinorId(@Param("userId") Long userId, @Param("minorId") Long minorId);
 }

@@ -38,9 +38,7 @@ public class Review {
     @Column(nullable = false)
     private int totalMark = 0;
     @Column(nullable = false)
-    private float likeValue = 0;
-    @Column(nullable = false)
-    private float commentValue = 0;
+    private float value = 0;
     @Column(nullable = false)
     private LocalDate createDate;
 }

@@ -29,4 +29,6 @@ public class Comment {
     private Long userId;
     @Column(nullable = false)
     private LocalDate createDate;
+    @Column
+    private Long parentId;
 }

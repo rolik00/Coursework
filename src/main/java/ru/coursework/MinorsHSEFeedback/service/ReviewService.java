@@ -15,6 +15,7 @@ import ru.coursework.MinorsHSEFeedback.repository.LikeRepository;
 import ru.coursework.MinorsHSEFeedback.repository.MinorRepository;
 import ru.coursework.MinorsHSEFeedback.repository.ResultRepository;
 import ru.coursework.MinorsHSEFeedback.repository.ReviewRepository;
+import ru.coursework.MinorsHSEFeedback.repository.UserRepository;
 import ru.coursework.MinorsHSEFeedback.request.CreateReviewRequest;
 import ru.coursework.MinorsHSEFeedback.request.UpdateReviewRequest;
 
@@ -22,6 +23,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -33,16 +35,16 @@ public class ReviewService {
     private final MinorRepository minorRepository;
     private final LikeRepository likeRepository;
     private final CommentRepository commentRepository;
+    private final UserRepository userRepository;
     private final UiReviewMapper reviewMapper;
-    private final UserService userService;
 
     private final Comparator<UiReview> comparatorByValue = (r1, r2) -> Float.compare(r2.getValue(), r1.getValue());
-    private final Comparator<UiReview> comparatorByDate = Comparator.comparing(UiReview::getCreateDate);
+    private final Comparator<UiReview> comparatorByDate = Comparator.comparing(UiReview::getCreateDate).reversed();
     @Transactional
     public UiReview createReview(CreateReviewRequest request) {
-        checkCanCreateReview(request.getEmail());
-        User user = userService.findByEmail(request.getEmail()).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        User user = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new UsernameNotFoundException("User not found"));
         Long minorId = minorRepository.findByTitle(request.getMinorTitle());
+        checkCanCreateReview(request.getEmail(), minorId);
         Review review = Review.builder()
                 .userId(user.getId())
                 .minorId(minorId)
@@ -55,7 +57,7 @@ public class ReviewService {
                 .build();
         reviewRepository.save(review);
         user.setCount(user.getCount() + 1);
-        userService.save(user);
+        userRepository.save(user);
         Result result = resultRepository.findByMinorId(minorId).orElseThrow();
         result.setReviewsCount(result.getReviewsCount() + 1);
         result.setDifficultyMarkSum(result.getDifficultyMarkSum() + request.getDifficultyMark());
@@ -106,7 +108,7 @@ public class ReviewService {
         checkCanUpdateOrDeleteReview(id, email);
         Review review = reviewRepository.findById(id)
                 .orElseThrow(() -> new ReviewException("Review not found"));
-        User user = userService.findByEmail(email)
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         Result result = resultRepository.findByMinorId(review.getMinorId()).orElseThrow();
         user.setCount(user.getCount() - 1);
@@ -115,7 +117,7 @@ public class ReviewService {
         result.setInterestMarkSum(result.getInterestMarkSum() - review.getInterestMark());
         result.setTimeConsumptionMarkSum(result.getTimeConsumptionMarkSum() - review.getTimeConsumptionMark());
         result.setTotalMarkSum(result.getTotalMarkSum() - review.getTotalMark());
-        userService.save(user);
+        userRepository.save(user);
         resultRepository.save(result);
         reviewRepository.delete(review);
         likeRepository.deleteByReviewId(review.getId());
@@ -139,16 +141,20 @@ public class ReviewService {
         return uiReviews;
     }
 
-    private void checkCanCreateReview(String email) {
-        User user = userService.findByEmail(email)
+    private void checkCanCreateReview(String email, Long minorId) {
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        if (user.getCount() > 4) {
+        Optional<Review> review = reviewRepository.findReviewByUserIdAndMinorId(user.getId(), minorId);
+        if (review.isPresent()) {
+            throw new ReviewException("Пользователь уже писал отзыв для этого майнора");
+        }
+        if (user.getCount() >= 4) {
             throw new ReviewException("Превышен лимит количества отзывов для пользователя");
         }
     }
 
     private void checkCanUpdateOrDeleteReview(Long id, String email) {
-        User user = userService.findByEmail(email)
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         Review review = reviewRepository.findById(id).orElseThrow(() -> new ReviewException("Review not found"));
         if(!review.getUserId().equals(user.getId())) {

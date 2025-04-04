@@ -26,6 +26,7 @@ public class UiCommentMapperImpl implements UiCommentMapper {
         uiComment.setReviewId(comment.getReviewId());
         uiComment.setUserName(user.getName());
         uiComment.setCreateDate(comment.getCreateDate());
+        uiComment.setParentId(comment.getParentId());
         return uiComment;
     }
 }

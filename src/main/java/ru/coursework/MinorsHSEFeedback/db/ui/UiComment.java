@@ -15,4 +15,5 @@ public class UiComment {
     private Long reviewId;
     private String userName;
     private LocalDate createDate;
+    private Long parentId;
 }

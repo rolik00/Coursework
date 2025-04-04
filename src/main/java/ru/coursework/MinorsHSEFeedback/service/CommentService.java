@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CommentService {
     private final CommentRepository commentRepository;
-    private final ReviewRepository reviewRepository;
     private final UserService userService;
     private final UiCommentMapper commentMapper;
     @Transactional
@@ -37,12 +36,9 @@ public class CommentService {
         comment.setUserId(user.getId());
         comment.setBody(request.getBody());
         comment.setCreateDate(LocalDate.now());
+        comment.setParentId(request.getParentId());
         commentRepository.save(comment);
-        Review review = reviewRepository.findById(request.getReviewId())
-                .orElseThrow(() -> new ReviewException("Review not found"));
-        review.setCommentValue(setCommentValue(request.getReviewId(), review.getMinorId()));
-        reviewRepository.save(review);
-        return new UiComment(comment.getId(), comment.getBody(), comment.getReviewId(), user.getName(), comment.getCreateDate());
+        return commentMapper.apply(comment);
     }
 
     @Transactional
@@ -52,9 +48,7 @@ public class CommentService {
                 .orElseThrow(() -> new CommentException("Comment not found"));
         comment.setBody(request.getBody());
         commentRepository.save(comment);
-        String userName = userService.findByEmail(request.getEmail())
-                .orElseThrow(() -> new UsernameNotFoundException("User not found")).getName();
-        return new UiComment(comment.getId(), comment.getBody(), comment.getReviewId(), userName, comment.getCreateDate());
+        return commentMapper.apply(comment);
     }
 
     @Transactional
@@ -63,10 +57,6 @@ public class CommentService {
         Comment comment = commentRepository.findById(id)
                 .orElseThrow(() -> new CommentException("Comment not found"));
         commentRepository.delete(comment);
-        Review review = reviewRepository.findById(comment.getReviewId())
-                .orElseThrow(() -> new ReviewException("Review not found"));
-        review.setCommentValue(setCommentValue(comment.getReviewId(), review.getMinorId()));
-        reviewRepository.save(review);
         return true;
     }
 
@@ -84,11 +74,5 @@ public class CommentService {
         if(!comment.getUserId().equals(user.getId())) {
             throw new CommentException("Текущий пользователь не является создателем данного комментария");
         }
-    }
-    private float setCommentValue(Long reviewId, Long minorId) {
-        int tmpComment = commentRepository.countCommentsByReviewIds(Set.of(reviewId));
-        Set<Long> reviewIds = reviewRepository.getReviewIds(minorId);
-        int totalComment = commentRepository.countCommentsByReviewIds(reviewIds);
-        return (float) tmpComment / totalComment;
     }
 }
