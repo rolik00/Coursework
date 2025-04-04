@@ -29,6 +29,7 @@ public class CommentService {
     private final UiCommentMapper commentMapper;
     @Transactional
     public UiComment createComment(CreateCommentRequest request) {
+        checkCanCreateComment(request.getParentId(), request.getReviewId());
         User user = userService.findByEmail(request.getEmail())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         Comment comment = new Comment();
@@ -66,12 +67,23 @@ public class CommentService {
         return comments.stream().map(commentMapper::apply).collect(Collectors.toSet());
     }
 
+    private void checkCanCreateComment(Long parentId, Long reviewId) {
+        if (parentId == null || parentId == 0) {
+            return;
+        }
+        Comment parentComment = commentRepository.findById(parentId)
+                .orElseThrow(() -> new CommentException("Parent comment not found"));
+        if (!parentComment.getReviewId().equals(reviewId)) {
+            throw new CommentException("Комментарий, на который отвечаем не пренадлежит текущему отзыву");
+        }
+    }
+
     private void checkCanUpdateOrDeleteComment(Long id, String email) {
         User user = userService.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         Comment comment = commentRepository.findById(id)
                 .orElseThrow(() -> new CommentException("Comment not found"));
-        if(!comment.getUserId().equals(user.getId())) {
+        if (!comment.getUserId().equals(user.getId())) {
             throw new CommentException("Текущий пользователь не является создателем данного комментария");
         }
     }

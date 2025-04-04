@@ -25,6 +25,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -128,6 +129,8 @@ public class ReviewService {
     @Transactional(readOnly = true)
     public List<UiReview> getReviews(Long minorId) {
         Set<Review> reviews = reviewRepository.getReviews(minorId);
+        Set<Long> reviewIds = reviews.stream().map(Review::getId).collect(Collectors.toSet());
+        reviews.stream().map(review -> review.setValue(setValue(review.getId(), reviewIds))).collect(Collectors.toSet());
         List<UiReview> uiReviews = new ArrayList<>(reviews.stream().map(reviewMapper::apply).toList());
         uiReviews.sort(comparatorByValue);
         return uiReviews;
@@ -160,5 +163,31 @@ public class ReviewService {
         if(!review.getUserId().equals(user.getId())) {
             throw new ReviewException("Текущий пользователь не является создателем данного отзыва");
         }
+    }
+
+    private float setValue(Long reviewId, Set<Long> reviewIds) {
+        return setCommentValue(reviewId, reviewIds) + setLikeValue(reviewId, reviewIds);
+    }
+
+    private float setCommentValue(Long reviewId, Set<Long> reviewIds) {
+        int tmpComment = commentRepository.countCommentsByReviewIds(Set.of(reviewId));
+        int totalComment = commentRepository.countCommentsByReviewIds(reviewIds);
+        if (tmpComment == 0 || totalComment == 0) return 0;
+        return (float) tmpComment / totalComment;
+    }
+
+    private float setLikeValue(Long reviewId, Set<Long> reviewIds) {
+        int totalLikes = likeRepository.getCountLikesByReviewIds(reviewIds);
+        int totalDislikes = likeRepository.getCountDislikesByReviewIds(reviewIds);
+        int tmpLikes = likeRepository.getCountLikesByReviewIds(Set.of(reviewId));
+        int tmpDislikes = likeRepository.getCountDislikesByReviewIds(Set.of(reviewId));
+        int max = totalLikes - totalDislikes;
+        if ((tmpLikes - tmpDislikes) == 0) return 0;
+        if (max > 0) {
+            return (float) (tmpLikes - tmpDislikes) / max;
+        } else if (max == 0) {
+            return (float) 1 / (tmpLikes - tmpDislikes);
+        }
+        return (float) -(tmpLikes - tmpDislikes) / max;
     }
 }

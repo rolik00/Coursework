@@ -69,7 +69,7 @@ public class LikeService {
             throw new LikeException("Пользователь уже поставил лайк или дизлайк на этот отзыв");
         }
         if (user.getId().equals(review.getUserId())) {
-            throw new LikeException("Пользователь не может поставить лайк на свой отзыв");
+            throw new LikeException("Пользователь не может поставить лайк/дизлайк на свой отзыв");
         }
     }
 
