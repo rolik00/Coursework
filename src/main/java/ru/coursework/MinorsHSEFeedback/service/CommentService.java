@@ -58,6 +58,7 @@ public class CommentService {
         Comment comment = commentRepository.findById(id)
                 .orElseThrow(() -> new CommentException("Comment not found"));
         commentRepository.delete(comment);
+        commentRepository.updateComment(comment.getId(), comment.getParentId());
         return true;
     }
 

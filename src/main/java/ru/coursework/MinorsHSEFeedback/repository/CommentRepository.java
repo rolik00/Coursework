@@ -20,4 +20,9 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     @Query("SELECT COUNT(1) FROM Comment c where c.reviewId IN :reviewId")
     int countCommentsByReviewIds(@Param("reviewId") Set<Long> reviewId);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE Comment c SET c.parentId = :newParentId WHERE c.parentId = :parentId")
+    void updateComment(@Param("parentId") Long parentId, @Param("newParentId") Long newParentId);
 }
