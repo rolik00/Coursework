@@ -48,8 +48,4 @@ public class CustomUserDetails implements UserDetails {
 		return true;
 	}
 
-	public String getFullName() {
-		return user.getName();
-	}
-
 }

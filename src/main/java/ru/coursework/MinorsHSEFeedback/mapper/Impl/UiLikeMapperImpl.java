@@ -1,6 +1,6 @@
 package ru.coursework.MinorsHSEFeedback.mapper.Impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import ru.coursework.MinorsHSEFeedback.db.Like;
@@ -9,9 +9,9 @@ import ru.coursework.MinorsHSEFeedback.mapper.UiLikeMapper;
 import ru.coursework.MinorsHSEFeedback.repository.UserRepository;
 
 @Component
+@RequiredArgsConstructor
 public class UiLikeMapperImpl implements UiLikeMapper {
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
     @Override
     public UiLike apply(Like like) {
         if (like == null) {

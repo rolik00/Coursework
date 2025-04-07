@@ -1,7 +1,6 @@
 package ru.coursework.MinorsHSEFeedback.mapper.Impl;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import ru.coursework.MinorsHSEFeedback.db.Review;

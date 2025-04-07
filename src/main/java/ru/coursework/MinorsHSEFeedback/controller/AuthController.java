@@ -19,11 +19,11 @@ import ru.coursework.MinorsHSEFeedback.service.UserService;
 
 import java.util.regex.Pattern;
 
+import static ru.coursework.MinorsHSEFeedback.enums.Errors.INCORRECT_PASSWORD_ERROR;
 import static ru.coursework.MinorsHSEFeedback.enums.Errors.IS_EXIST_ERROR;
 import static ru.coursework.MinorsHSEFeedback.enums.Errors.IS_NOT_HSE_ERROR;
 import static ru.coursework.MinorsHSEFeedback.enums.Errors.PASSWORD_MATCH_ERROR;
 import static ru.coursework.MinorsHSEFeedback.enums.Errors.PASSWORD_NOT_MATCH_ERROR;
-import static ru.coursework.MinorsHSEFeedback.enums.Errors.UNCORRECT_PASSWORD_ERROR;
 import static ru.coursework.MinorsHSEFeedback.enums.Errors.UNRELIABLE_PASSWORD_ERROR;
 import static ru.coursework.MinorsHSEFeedback.enums.Letters.BEGIN;
 import static ru.coursework.MinorsHSEFeedback.enums.Letters.END;
@@ -88,14 +88,14 @@ public class AuthController {
 		UiUser uiUser = null;
 		try {
 			User user = userService.findByEmail(request.getLogin())
-					.orElseThrow(() -> new UsernameNotFoundException("User not found"));
+					.orElseThrow(() -> new UsernameNotFoundException("пользователь не найден"));
 
 			BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 			String encodedPassword = passwordEncoder.encode(request.getNewPassword());
 
 			if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
-				log.error("User = {}, error = {} ", user.getEmail(), UNCORRECT_PASSWORD_ERROR.getTitle());
-				return ResponseEntity.badRequest().body(UNCORRECT_PASSWORD_ERROR.getTitle());
+				log.error("User = {}, error = {} ", user.getEmail(), INCORRECT_PASSWORD_ERROR.getTitle());
+				return ResponseEntity.badRequest().body(INCORRECT_PASSWORD_ERROR.getTitle());
 			}
 
 			if (passwordEncoder.matches(request.getNewPassword(), user.getPassword())) {

@@ -4,5 +4,5 @@ import ru.coursework.MinorsHSEFeedback.db.User;
 import ru.coursework.MinorsHSEFeedback.db.ui.UiUser;
 
 public interface UiUserMapper {
-    public UiUser apply(User user);
+    UiUser apply(User user);
 }

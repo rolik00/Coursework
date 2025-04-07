@@ -3,10 +3,9 @@ package ru.coursework.MinorsHSEFeedback.extraFunctions;
 import java.util.Random;
 
 public class RandomString {
-    private String alphanumericCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuv";
-
-
     public String randomAlphanumericString(int length) {
+        String alphanumericCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuv";
+
         StringBuffer randomString = new StringBuffer(length);
         Random random = new Random();
 

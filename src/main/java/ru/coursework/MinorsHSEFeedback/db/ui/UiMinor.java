@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UiMinor {
     private Long id;
-    private Long categoryId;
+    private String categoryTitle;
     private String title;
     private float difficultyRating = 0;
     private float interestRating = 0;

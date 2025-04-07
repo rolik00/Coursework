@@ -10,9 +10,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.data.mapping.InstanceCreatorMetadata;
+import ru.coursework.MinorsHSEFeedback.db.Category;
 import ru.coursework.MinorsHSEFeedback.db.Minor;
 import ru.coursework.MinorsHSEFeedback.db.Result;
 import ru.coursework.MinorsHSEFeedback.db.ui.UiMinor;
+import ru.coursework.MinorsHSEFeedback.repository.CategoryRepository;
 import ru.coursework.MinorsHSEFeedback.repository.ResultRepository;
 
 import java.util.Optional;
@@ -21,6 +23,8 @@ public class UiMinorMapperTest {
 
     @Mock
     private ResultRepository resultRepository;
+    @Mock
+    private CategoryRepository categoryRepository;
 
     @InjectMocks
     private UiMinorMapperImpl uiMinorMapperImpl;
@@ -50,13 +54,16 @@ public class UiMinorMapperTest {
         result.setTimeConsumptionMarkSum(4);
         result.setTotalMarkSum(10);
 
+        Category category = new Category(10L, "CATEGORY");
+
         when(resultRepository.findByMinorId(1L)).thenReturn(Optional.of(result));
+        when(categoryRepository.findTitleById(10L)).thenReturn(category.getTitle());
 
         UiMinor uiMinor = uiMinorMapperImpl.apply(minor);
 
         assertNotNull(uiMinor);
         assertEquals(minor.getId(), uiMinor.getId());
-        assertEquals(minor.getCategoryId(), uiMinor.getCategoryId());
+        assertEquals(category.getTitle(), uiMinor.getCategoryTitle());
         assertEquals(minor.getTitle(), uiMinor.getTitle());
         assertEquals(4.0f, uiMinor.getDifficultyRating());
         assertEquals(3.0f, uiMinor.getInterestRating());
@@ -78,13 +85,16 @@ public class UiMinorMapperTest {
         result.setTimeConsumptionMarkSum(0);
         result.setTotalMarkSum(0);
 
+        Category category = new Category(10L, "CATEGORY");
+
         when(resultRepository.findByMinorId(1L)).thenReturn(Optional.of(result));
+        when(categoryRepository.findTitleById(10L)).thenReturn(category.getTitle());
 
         UiMinor uiMinor = uiMinorMapperImpl.apply(minor);
 
         assertNotNull(uiMinor);
         assertEquals(minor.getId(), uiMinor.getId());
-        assertEquals(minor.getCategoryId(), uiMinor.getCategoryId());
+        assertEquals(category.getTitle(), uiMinor.getCategoryTitle());
         assertEquals(minor.getTitle(), uiMinor.getTitle());
         assertEquals(0.0f, uiMinor.getDifficultyRating());
         assertEquals(0.0f, uiMinor.getInterestRating());

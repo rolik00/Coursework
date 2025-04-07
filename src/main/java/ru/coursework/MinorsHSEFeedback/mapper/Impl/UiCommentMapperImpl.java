@@ -1,6 +1,6 @@
 package ru.coursework.MinorsHSEFeedback.mapper.Impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import ru.coursework.MinorsHSEFeedback.db.Comment;
@@ -10,9 +10,9 @@ import ru.coursework.MinorsHSEFeedback.mapper.UiCommentMapper;
 import ru.coursework.MinorsHSEFeedback.repository.UserRepository;
 
 @Component
+@RequiredArgsConstructor
 public class UiCommentMapperImpl implements UiCommentMapper {
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
     @Override
     public UiComment apply (Comment comment) {
         if (comment == null) {

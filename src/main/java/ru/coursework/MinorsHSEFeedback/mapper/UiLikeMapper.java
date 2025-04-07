@@ -4,5 +4,5 @@ import ru.coursework.MinorsHSEFeedback.db.Like;
 import ru.coursework.MinorsHSEFeedback.db.ui.UiLike;
 
 public interface UiLikeMapper {
-    public UiLike apply(Like like);
+    UiLike apply(Like like);
 }

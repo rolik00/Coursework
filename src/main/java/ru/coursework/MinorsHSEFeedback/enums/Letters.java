@@ -1,5 +1,8 @@
 package ru.coursework.MinorsHSEFeedback.enums;
 
+import lombok.Getter;
+
+@Getter
 public enum Letters {
     BEGIN("Здравствуйте, "),
     END("С уважением,\nКоманда MinorsHSEFeedbacks"),
@@ -8,12 +11,8 @@ public enum Letters {
     RESET_PASSWORD_1("!\n\nМы получили запрос на восстановление пароля для вашей учетной записи на портале MinorsHSEFeedbacks.\n\nПожалуйста, перейдите по следующей ссылке, чтобы сбросить ваш пароль:\n"),
     RESET_PASSWORD_2("\n\nЕсли вы не запрашивали восстановление пароля, пожалуйста, проигнорируйте это письмо. Ваш пароль останется неизменным.\n\n");
 
-    private String title;
+    private final String title;
     Letters(String title) {
         this.title = title;
-    }
-
-    public String getTitle() {
-        return title;
     }
 }
