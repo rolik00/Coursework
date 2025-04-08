@@ -58,7 +58,7 @@ public class WebSecurityConfig {
 		http.csrf(csrf -> csrf.disable());
 
 		http.authorizeHttpRequests(auth ->
-				auth.requestMatchers("/user/**").authenticated()
+				auth.requestMatchers("/some/**").authenticated()
 						.anyRequest().permitAll()
 		);
 

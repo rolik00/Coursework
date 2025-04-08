@@ -45,4 +45,10 @@ public class MinorServiceImpl implements MinorService {
                 .toList();
 
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Long getMinorIdByTitle(String title) {
+        return minorRepository.findByTitle(title);
+    }
 }

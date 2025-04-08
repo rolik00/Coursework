@@ -24,7 +24,7 @@ public class User {
 	@Column(nullable = false)
     private String courseTitle;
     @Column(nullable = false)
-    private String minorTitle;
+    private Long minorId;
 	@Column(nullable = false, unique = true)
 	private String email;
 	@Column(nullable = false)

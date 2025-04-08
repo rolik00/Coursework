@@ -11,4 +11,5 @@ public interface ReviewService {
     Review updateReview(UpdateReviewRequest request);
     boolean deleteReview(Long id, String email);
     Set<Review> getReviews(Long minorId);
+    Set<Review> getReviewsByUser(String email);
 }

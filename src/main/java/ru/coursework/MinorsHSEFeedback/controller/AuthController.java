@@ -15,6 +15,7 @@ import ru.coursework.MinorsHSEFeedback.db.ui.UiUser;
 import ru.coursework.MinorsHSEFeedback.mapper.UiUserMapper;
 import ru.coursework.MinorsHSEFeedback.request.RegistrationRequest;
 import ru.coursework.MinorsHSEFeedback.request.UpdatePasswordRequest;
+import ru.coursework.MinorsHSEFeedback.service.MinorService;
 import ru.coursework.MinorsHSEFeedback.service.UserService;
 
 import java.util.regex.Pattern;
@@ -35,6 +36,7 @@ import static ru.coursework.MinorsHSEFeedback.enums.Letters.UPDATE_PASSWORD;
 @RequiredArgsConstructor
 public class AuthController {
 	private final UserService userService;
+	private final MinorService minorService;
 	private final EmailSender emailSender;
 	private final UiUserMapper uiUserMapper;
 
@@ -70,7 +72,7 @@ public class AuthController {
 		User user = new User();
 		user.setName(request.getName());
 		user.setEmail(request.getEmail());
-		user.setMinorTitle(request.getMinorTitle());
+		user.setMinorId(minorService.getMinorIdByTitle(request.getMinorTitle()));
 		user.setCourseTitle(request.getCourseTitle());
 		user.setPassword(encodedPassword);
 		userService.save(user);

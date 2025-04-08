@@ -135,10 +135,21 @@ public class ReviewServiceImpl implements ReviewService {
         return reviews;
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public Set<Review> getReviewsByUser(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден"));
+        return reviewRepository.findReviewByUserId(user.getId());
+    }
+
     private void checkCanCreateReview(String email, Long minorId) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден"));
         Optional<Review> review = reviewRepository.findReviewByUserIdAndMinorId(user.getId(), minorId);
+        if (!user.getMinorId().equals(minorId)) {
+            throw new ReviewException("Пользователь не может оставить отзыв на этот майнор, так как не является его участником");
+        }
         if (review.isPresent()) {
             throw new ReviewException("Пользователь уже писал отзыв для этого майнора");
         }

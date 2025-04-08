@@ -1,17 +1,15 @@
-package ru.coursework.MinorsHSEFeedback.db.ui;
+package ru.coursework.MinorsHSEFeedback.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class UiUser {
-    private Long id;
+@AllArgsConstructor
+public class UpdateUserPatch {
     private String name;
-    private String courseTitle;
     private String minorTitle;
     private String email;
-    private float rating;
+    private String courseTitle;
 }

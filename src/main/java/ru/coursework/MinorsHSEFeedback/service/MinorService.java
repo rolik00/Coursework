@@ -10,4 +10,5 @@ public interface MinorService {
     List<Minor> findAllMinors();
     List<Minor> findAllMinorsByCategoryIds(Set<Long> categoryIds);
     List<Minor> getMinorsByIds(Set<Long> ids);
+    Long getMinorIdByTitle(String title);
 }
