@@ -3,13 +3,12 @@ package ru.coursework.MinorsHSEFeedback.mapper.Impl;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import org.hibernate.annotations.Instantiator;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.data.mapping.InstanceCreatorMetadata;
 import ru.coursework.MinorsHSEFeedback.db.Category;
 import ru.coursework.MinorsHSEFeedback.db.Minor;
 import ru.coursework.MinorsHSEFeedback.db.Result;
@@ -35,12 +34,14 @@ public class UiMinorMapperTest {
     }
 
     @Test
+    @DisplayName("Маппер возращает null, так как Minor = null")
     public void testApplyWithNullMinor() {
         UiMinor result = uiMinorMapperImpl.apply(null);
         assertNull(result);
     }
 
     @Test
+    @DisplayName("Успешный маппинг с вычислением оценок из результата")
     public void testApplyWithValidMinor() {
         Minor minor = new Minor();
         minor.setId(1L);
@@ -72,6 +73,7 @@ public class UiMinorMapperTest {
     }
 
     @Test
+    @DisplayName("Успешный маппинг без результата")
     public void testApplyWithNoReviews() {
         Minor minor = new Minor();
         minor.setId(1L);
@@ -103,6 +105,7 @@ public class UiMinorMapperTest {
     }
 
     @Test
+    @DisplayName("Неудача, так как нет значений результата к данному майнору")
     public void testApplyWithMissingResult() {
         Minor minor = new Minor();
         minor.setId(1L);
@@ -111,9 +114,7 @@ public class UiMinorMapperTest {
 
         when(resultRepository.findByMinorId(1L)).thenReturn(Optional.empty());
 
-        assertThrows(RuntimeException.class, () -> {
-            uiMinorMapperImpl.apply(minor);
-        });
+        assertThrows(RuntimeException.class, () -> uiMinorMapperImpl.apply(minor));
     }
 }
 
