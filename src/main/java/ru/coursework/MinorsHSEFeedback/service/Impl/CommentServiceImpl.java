@@ -9,6 +9,7 @@ import ru.coursework.MinorsHSEFeedback.db.Comment;
 import ru.coursework.MinorsHSEFeedback.db.Review;
 import ru.coursework.MinorsHSEFeedback.db.User;
 import ru.coursework.MinorsHSEFeedback.exceptions.CommentException;
+import ru.coursework.MinorsHSEFeedback.exceptions.ReviewException;
 import ru.coursework.MinorsHSEFeedback.repository.CommentRepository;
 import ru.coursework.MinorsHSEFeedback.repository.ReviewRepository;
 import ru.coursework.MinorsHSEFeedback.repository.UserRepository;
@@ -74,7 +75,7 @@ public class CommentServiceImpl implements CommentService {
 
     private void checkCanCreateComment(Long parentId, Long reviewId) {
         Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new CommentException("Отзыв не найден"));
+                .orElseThrow(() -> new ReviewException("Отзыв не найден"));
         if (parentId == null || parentId == 0) {
             return;
         }
