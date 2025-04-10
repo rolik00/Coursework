@@ -5,14 +5,17 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.coursework.MinorsHSEFeedback.db.Review;
 import ru.coursework.MinorsHSEFeedback.db.User;
 import ru.coursework.MinorsHSEFeedback.repository.MinorRepository;
 import ru.coursework.MinorsHSEFeedback.repository.UserRepository;
 import ru.coursework.MinorsHSEFeedback.request.UpdateUserRequest;
+import ru.coursework.MinorsHSEFeedback.service.ReviewService;
 import ru.coursework.MinorsHSEFeedback.service.UserService;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static ru.coursework.MinorsHSEFeedback.enums.Errors.IS_NOT_HSE_ERROR;
 
@@ -22,6 +25,7 @@ import static ru.coursework.MinorsHSEFeedback.enums.Errors.IS_NOT_HSE_ERROR;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final MinorRepository minorRepository;
+    private final ReviewService reviewService;
 
     @Override
     @Transactional
@@ -52,7 +56,9 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public List<User> findAll() {
-        return userRepository.findAll();
+        List<User> users = userRepository.findAll();
+        users.forEach(user -> user.setRating(setRating(user.getEmail())));
+        return users;
     }
 
     @Override
@@ -94,6 +100,17 @@ public class UserServiceImpl implements UserService {
         if (!newEmail.endsWith("@edu.hse.ru")) {
             throw new RuntimeException(IS_NOT_HSE_ERROR.getTitle());
         }
+    }
+
+    private float setRating(String email) {
+        Set<Review> reviews = reviewService.getReviewsByUser(email);
+        if (reviews.isEmpty()) {
+            return 0;
+        }
+        float sum = (float) reviews.stream()
+                .mapToDouble(Review::getValue)
+                .sum();
+        return sum / reviews.size();
     }
 }
 

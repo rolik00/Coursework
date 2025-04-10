@@ -140,7 +140,10 @@ public class ReviewServiceImpl implements ReviewService {
     public Set<Review> getReviewsByUser(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден"));
-        return reviewRepository.findReviewByUserId(user.getId());
+        Set<Review> reviews = reviewRepository.findReviewByUserId(user.getId());
+        reviews.forEach(review -> review.setValue(setValue(review.getId(),
+                reviewRepository.getReviews(review.getMinorId()).stream().map(Review::getId).collect(Collectors.toSet()))));
+        return reviews;
     }
 
     private void checkCanCreateReview(String email, Long minorId) {

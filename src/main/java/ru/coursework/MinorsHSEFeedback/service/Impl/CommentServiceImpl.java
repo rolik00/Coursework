@@ -1,13 +1,16 @@
 package ru.coursework.MinorsHSEFeedback.service.Impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.coursework.MinorsHSEFeedback.db.Comment;
+import ru.coursework.MinorsHSEFeedback.db.Review;
 import ru.coursework.MinorsHSEFeedback.db.User;
 import ru.coursework.MinorsHSEFeedback.exceptions.CommentException;
 import ru.coursework.MinorsHSEFeedback.repository.CommentRepository;
+import ru.coursework.MinorsHSEFeedback.repository.ReviewRepository;
 import ru.coursework.MinorsHSEFeedback.repository.UserRepository;
 import ru.coursework.MinorsHSEFeedback.request.CreateCommentRequest;
 import ru.coursework.MinorsHSEFeedback.request.UpdateCommentRequest;
@@ -16,12 +19,14 @@ import ru.coursework.MinorsHSEFeedback.service.CommentService;
 import java.time.LocalDate;
 import java.util.Set;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class CommentServiceImpl implements CommentService {
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
+    private final ReviewRepository reviewRepository;
 
     @Override
     @Transactional
@@ -68,6 +73,8 @@ public class CommentServiceImpl implements CommentService {
     }
 
     private void checkCanCreateComment(Long parentId, Long reviewId) {
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new CommentException("Отзыв не найден"));
         if (parentId == null || parentId == 0) {
             return;
         }
