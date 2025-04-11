@@ -13,8 +13,8 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.util.Properties;
 
-@Component
 @Slf4j
+@Component
 public class EmailSender {
 
     @Value("${email.host}")
