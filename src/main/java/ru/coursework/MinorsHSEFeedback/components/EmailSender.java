@@ -57,10 +57,10 @@ public class EmailSender {
 
             Transport.send(message);
 
-            log.info("Email sent successfully!");
+            log.info("Письмо отправлено пользователю!");
 
         } catch (MessagingException e) {
-            log.error("Email sent error {}", e.getMessage());
+            log.error("Ошибка при отправке сообщения {}", e.getMessage());
             e.printStackTrace();
         }
     }

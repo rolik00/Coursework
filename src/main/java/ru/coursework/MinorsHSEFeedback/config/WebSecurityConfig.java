@@ -64,7 +64,7 @@ public class WebSecurityConfig {
 
 		http.formLogin(login ->
 				login.usernameParameter("email")
-						.defaultSuccessUrl("/api/minors")
+						.defaultSuccessUrl("/minors")
 						.permitAll()
 		);
 
