@@ -284,6 +284,7 @@ public class CommentServiceTest {
         verify(userRepository).findByEmail(user.getEmail());
         verify(commentRepository, times(2)).findById(comment.getId());
         verify(commentRepository).delete(comment);
+        verify(commentRepository).updateComment(comment.getId(), comment.getParentId());
     }
 
     @Test
