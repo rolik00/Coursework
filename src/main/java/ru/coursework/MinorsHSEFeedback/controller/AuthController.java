@@ -136,6 +136,7 @@ public class AuthController {
 		return ResponseEntity.ok(uiUser);
 	}
 
+	@Operation(summary = "Вход")
     @PostMapping("/authenticate")
     public ResponseEntity<AuthResponse> authenticate(@RequestBody AuthRequest request) {
         return ResponseEntity.ok(authService.authenticate(request));
