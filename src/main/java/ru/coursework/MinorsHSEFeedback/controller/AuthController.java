@@ -8,13 +8,17 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.coursework.MinorsHSEFeedback.components.EmailSender;
 import ru.coursework.MinorsHSEFeedback.db.User;
 import ru.coursework.MinorsHSEFeedback.db.ui.UiUser;
 import ru.coursework.MinorsHSEFeedback.mapper.UiUserMapper;
+import ru.coursework.MinorsHSEFeedback.request.AuthRequest;
+import ru.coursework.MinorsHSEFeedback.request.AuthResponse;
 import ru.coursework.MinorsHSEFeedback.request.RegistrationRequest;
 import ru.coursework.MinorsHSEFeedback.request.UpdatePasswordRequest;
+import ru.coursework.MinorsHSEFeedback.service.AuthService;
 import ru.coursework.MinorsHSEFeedback.service.MinorService;
 import ru.coursework.MinorsHSEFeedback.service.UserService;
 
@@ -34,10 +38,12 @@ import static ru.coursework.MinorsHSEFeedback.enums.Letters.UPDATE_PASSWORD;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/auth")
 public class AuthController {
 	private final UserService userService;
 	private final MinorService minorService;
 	private final EmailSender emailSender;
+    private final AuthService authService;
 	private final UiUserMapper uiUserMapper;
 
 	private static final Pattern PASSWORD_PATTERN = Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=_])(?=\\S+$).{8,}$");
@@ -129,4 +135,9 @@ public class AuthController {
 		}
 		return ResponseEntity.ok(uiUser);
 	}
+
+    @PostMapping("/authenticate")
+    public ResponseEntity<AuthResponse> authenticate(@RequestBody AuthRequest request) {
+        return ResponseEntity.ok(authService.authenticate(request));
+    }
 }

@@ -29,6 +29,8 @@ public class CommentServiceImpl implements CommentService {
     private final UserRepository userRepository;
     private final ReviewRepository reviewRepository;
 
+    private static final String COMMENT_WAS_DELETE = "Комментарий был удален";
+
     @Override
     @Transactional
     public Comment createComment(CreateCommentRequest request) {
@@ -62,8 +64,13 @@ public class CommentServiceImpl implements CommentService {
         checkCanUpdateOrDeleteComment(id, email);
         Comment comment = commentRepository.findById(id)
                 .orElseThrow(() -> new CommentException("Комментарий не найден"));
-        commentRepository.delete(comment);
-        commentRepository.updateComment(comment.getId(), comment.getParentId());
+        if (commentRepository.countChildrenComment(id) == 0) {
+            commentRepository.delete(comment);
+        }
+        else {
+            comment.setBody(COMMENT_WAS_DELETE);
+            commentRepository.save(comment);
+        }
         return true;
     }
 
@@ -93,6 +100,9 @@ public class CommentServiceImpl implements CommentService {
                 .orElseThrow(() -> new CommentException("Комментарий не найден"));
         if (!comment.getUserId().equals(user.getId())) {
             throw new CommentException("Текущий пользователь не является создателем данного комментария");
+        }
+        if (comment.getBody().equals(COMMENT_WAS_DELETE)) {
+            throw new CommentException("Нельзя обновить/удалить комментарий, так как он уже удален");
         }
     }
 }

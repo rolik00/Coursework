@@ -273,18 +273,39 @@ public class CommentServiceTest {
     }
 
     @Test
+    @DisplayName("Комментарий не обновлен, так как уже удаленный")
+    public void testUpdateCommentDeleted() {
+        comment.setBody("Комментарий был удален");
+        UpdateCommentRequest request = new UpdateCommentRequest();
+        request.setId(comment.getId());
+        request.setEmail(user.getEmail());
+        request.setBody("Updated comment");
+
+        when(userRepository.findByEmail(request.getEmail())).thenReturn(Optional.of(user));
+        when(commentRepository.findById(request.getId())).thenReturn(Optional.of(comment));
+
+        CommentException exception = assertThrows(CommentException.class, () -> commentService.updateComment(request));
+        assertEquals("Нельзя обновить/удалить комментарий, так как он уже удален", exception.getMessage());
+        verify(userRepository).findByEmail(request.getEmail());
+        verify(commentRepository).findById(request.getId());
+        verify(commentRepository, never()).save(any(Comment.class));
+    }
+
+    @Test
     @DisplayName("Успешное удаление комментария")
     public void testDeleteComment() {
         when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
         when(commentRepository.findById(comment.getId())).thenReturn(Optional.of(comment));
+        when(commentRepository.countChildrenComment(comment.getId())).thenReturn(0);
 
         boolean result = commentService.deleteComment(comment.getId(), user.getEmail());
 
         assertTrue(result);
         verify(userRepository).findByEmail(user.getEmail());
         verify(commentRepository, times(2)).findById(comment.getId());
+        verify(commentRepository).countChildrenComment(comment.getId());
         verify(commentRepository).delete(comment);
-        verify(commentRepository).updateComment(comment.getId(), comment.getParentId());
+        verify(commentRepository, never()).save(comment);
     }
 
     @Test
@@ -299,7 +320,9 @@ public class CommentServiceTest {
         assertEquals("Пользователь не найден", exception.getMessage());
         verify(userRepository).findByEmail("nonexistent@example.com");
         verify(commentRepository, never()).findById(comment.getId());
-        verify(commentRepository, never()).delete(any(Comment.class));
+        verify(commentRepository, never()).countChildrenComment(comment.getId());
+        verify(commentRepository, never()).delete(comment);
+        verify(commentRepository, never()).save(comment);
     }
 
     @Test
@@ -314,7 +337,9 @@ public class CommentServiceTest {
         assertEquals("Комментарий не найден", exception.getMessage());
         verify(userRepository).findByEmail(user.getEmail());
         verify(commentRepository).findById(id);
-        verify(commentRepository, never()).delete(any(Comment.class));
+        verify(commentRepository, never()).countChildrenComment(comment.getId());
+        verify(commentRepository, never()).delete(comment);
+        verify(commentRepository, never()).save(comment);
     }
 
     @Test
@@ -330,7 +355,45 @@ public class CommentServiceTest {
         assertEquals("Текущий пользователь не является создателем данного комментария", exception.getMessage());
         verify(userRepository).findByEmail(user.getEmail());
         verify(commentRepository).findById(comment.getId());
-        verify(commentRepository, never()).delete(any(Comment.class));
+        verify(commentRepository, never()).countChildrenComment(comment.getId());
+        verify(commentRepository, never()).delete(comment);
+        verify(commentRepository, never()).save(comment);
+    }
+
+    @Test
+    @DisplayName("Комментарий не удален, так как уже удаленный")
+    public void testDeleteCommentDeleted() {
+        comment.setBody("Комментарий был удален");
+
+        when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
+        when(commentRepository.findById(comment.getId())).thenReturn(Optional.of(comment));
+
+        CommentException exception =
+                assertThrows(CommentException.class, () -> commentService.deleteComment(comment.getId(), user.getEmail()));
+        assertEquals("Нельзя обновить/удалить комментарий, так как он уже удален", exception.getMessage());
+        verify(userRepository).findByEmail(user.getEmail());
+        verify(commentRepository).findById(comment.getId());
+        verify(commentRepository, never()).countChildrenComment(comment.getId());
+        verify(commentRepository, never()).delete(comment);
+        verify(commentRepository, never()).save(comment);
+    }
+
+    @Test
+    @DisplayName("Успешное удаление родительского комментария")
+    public void testDeleteParentComment() {
+        when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
+        when(commentRepository.findById(parentComment.getId())).thenReturn(Optional.of(parentComment));
+        when(commentRepository.countChildrenComment(parentComment.getId())).thenReturn(1);
+
+        boolean result = commentService.deleteComment(parentComment.getId(), user.getEmail());
+
+        assertTrue(result);
+        assertEquals("Комментарий был удален" ,parentComment.getBody());
+        verify(userRepository).findByEmail(user.getEmail());
+        verify(commentRepository, times(2)).findById(parentComment.getId());
+        verify(commentRepository).countChildrenComment(parentComment.getId());
+        verify(commentRepository, never()).delete(parentComment);
+        verify(commentRepository).save(parentComment);
     }
 
     @Test

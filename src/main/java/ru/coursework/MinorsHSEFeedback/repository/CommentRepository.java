@@ -18,11 +18,9 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     @Query("DELETE FROM Comment c WHERE c.reviewId = :reviewId")
     void deleteByReviewId(@Param("reviewId") Long reviewId);
 
-    @Query("SELECT COUNT(1) FROM Comment c where c.reviewId IN :reviewId")
+    @Query("SELECT COUNT(1) FROM Comment c WHERE c.reviewId IN :reviewId")
     int countCommentsByReviewIds(@Param("reviewId") Set<Long> reviewId);
 
-    @Modifying
-    @Transactional
-    @Query("UPDATE Comment c SET c.parentId = :newParentId WHERE c.parentId = :parentId")
-    void updateComment(@Param("parentId") Long parentId, @Param("newParentId") Long newParentId);
+    @Query("SELECT COUNT(1) FROM Comment c WHERE c.parentId = :parentId")
+    int countChildrenComment(@Param("parentId") Long parentId);
 }
