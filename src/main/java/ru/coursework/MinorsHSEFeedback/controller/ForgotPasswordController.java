@@ -34,7 +34,7 @@ public class ForgotPasswordController {
     private final UiUserMapper uiUserMapper;
 
     private RandomString randomString = new RandomString();
-    private static final String BASE_URL = "http://localhost:8080";
+    private static final String BASE_URL = "http://localhost:3000";
 
     private static final Pattern PASSWORD_PATTERN = Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=_])(?=\\S+$).{8,}$");
 
