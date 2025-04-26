@@ -1,0 +1,29 @@
+services:
+  server:
+    build:
+      context: .
+    ports:
+      - 8080:8080
+    depends_on:
+       db:
+         condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/MinorsHSEFeedback
+      SPRING_DATASOURCE_USERNAME: coursework
+      SPRING_DATASOURCE_PASSWORD: coursework
+    restart: on-failure
+
+  db:
+    image: postgres
+    restart: always
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=MinorsHSEFeedback
+      - POSTGRES_USER=coursework
+      - POSTGRES_PASSWORD=coursework
+    ports:
+      - 5432:5432
+
+volumes:
+  db-data:

@@ -57,7 +57,7 @@ public class WebSecurityConfig {
 			public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
 				CorsConfiguration corsConfiguration = new CorsConfiguration();
 				corsConfiguration.setAllowCredentials(true);
-				corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
+				corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:3000")); //прописать итоговый url
 				corsConfiguration.setAllowedMethods(Collections.singletonList("*"));
 				corsConfiguration.setAllowedHeaders(Collections.singletonList("*"));
 				corsConfiguration.setMaxAge(Duration.ofMinutes(5L));
@@ -68,8 +68,6 @@ public class WebSecurityConfig {
 		http.csrf(csrf -> csrf.disable())
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(auth -> auth
-						.requestMatchers("/api/auth/**").permitAll()
-						.requestMatchers("/some/**").authenticated()
 						.anyRequest().permitAll()
 				)
 				.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
