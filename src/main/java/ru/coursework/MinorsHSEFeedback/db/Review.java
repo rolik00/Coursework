@@ -29,7 +29,7 @@ public class Review {
     private Long userId;
     @Column(nullable = false)
     private Long minorId;
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "text")
     private String body;
     @Column(nullable = false)
     private int difficultyMark = 0;
