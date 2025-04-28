@@ -12,6 +12,7 @@ import java.time.LocalDate;
 public class UiReview {
     private Long id;
     private String userName;
+    private String courseTitle;
     private String minorTitle;
     private String body;
     private int difficultyMark;

@@ -15,5 +15,6 @@ public class UiMinor {
     private float interestRating = 0;
     private float timeConsumptionRating = 0;
     private float totalRating = 0;
+    private int reviewCount = 0;
     private String link;
 }

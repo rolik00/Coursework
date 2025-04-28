@@ -43,6 +43,7 @@ public class UiMinorMapperImpl implements UiMinorMapper {
         uiMinor.setInterestRating(interestRating);
         uiMinor.setTimeConsumptionRating(timeConsumptionRating);
         uiMinor.setTotalRating(totalRating);
+        uiMinor.setReviewCount(result.getReviewsCount());
 
         return uiMinor;
     }

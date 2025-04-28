@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import ru.coursework.MinorsHSEFeedback.db.Review;
+import ru.coursework.MinorsHSEFeedback.db.User;
 import ru.coursework.MinorsHSEFeedback.db.ui.UiReview;
 import ru.coursework.MinorsHSEFeedback.mapper.UiReviewMapper;
 import ru.coursework.MinorsHSEFeedback.repository.CommentRepository;
@@ -25,13 +26,14 @@ public class UiReviewMapperImpl implements UiReviewMapper {
         if (review == null) {
             return null;
         }
-        String userName = userRepository.findById(review.getUserId())
-                .orElseThrow(() -> new UsernameNotFoundException("User not found")).getName();
-        String title = minorRepository.findById(review.getMinorId()).orElseThrow().getTitle();
+        User user = userRepository.findById(review.getUserId())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        String minorTitle = minorRepository.findById(review.getMinorId()).orElseThrow().getTitle();
         UiReview uiReview = new UiReview();
         uiReview.setId(review.getId());
-        uiReview.setUserName(userName);
-        uiReview.setMinorTitle(title);
+        uiReview.setUserName(user.getName());
+        uiReview.setCourseTitle(user.getCourseTitle());
+        uiReview.setMinorTitle(minorTitle);
         uiReview.setBody(review.getBody());
         uiReview.setDifficultyMark(review.getDifficultyMark());
         uiReview.setInterestMark(review.getInterestMark());
