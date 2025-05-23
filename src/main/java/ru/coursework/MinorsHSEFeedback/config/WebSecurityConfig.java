@@ -57,7 +57,7 @@ public class WebSecurityConfig {
 			public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
 				CorsConfiguration corsConfiguration = new CorsConfiguration();
 				corsConfiguration.setAllowCredentials(true);
-				corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "https://mak48.github.io/reactCoursework/"));
+				corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "https://mak48.github.io/reactCoursework"));
 				corsConfiguration.setAllowedMethods(Collections.singletonList("*"));
 				corsConfiguration.setAllowedHeaders(Collections.singletonList("*"));
 				corsConfiguration.setMaxAge(Duration.ofMinutes(5L));
