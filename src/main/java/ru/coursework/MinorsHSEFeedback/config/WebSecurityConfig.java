@@ -3,6 +3,7 @@ package ru.coursework.MinorsHSEFeedback.config;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -57,7 +58,7 @@ public class WebSecurityConfig {
 			public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
 				CorsConfiguration corsConfiguration = new CorsConfiguration();
 				corsConfiguration.setAllowCredentials(true);
-				corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "https://mak48.github.io/reactCoursework"));
+				corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "https://mak48.github.io/", "https://mak48.github.io/reactCoursework"));
 				corsConfiguration.setAllowedMethods(Collections.singletonList("*"));
 				corsConfiguration.setAllowedHeaders(Collections.singletonList("*"));
 				corsConfiguration.setMaxAge(Duration.ofMinutes(5L));
@@ -68,6 +69,7 @@ public class WebSecurityConfig {
 		http.csrf(csrf -> csrf.disable())
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(auth -> auth
+						.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 						.anyRequest().permitAll()
 				)
 				.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
