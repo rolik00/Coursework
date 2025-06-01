@@ -1,5 +1,8 @@
 package ru.coursework.MinorsHSEFeedback.config;
 
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.servers.Server;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,6 +24,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -59,7 +63,7 @@ public class WebSecurityConfig {
 				CorsConfiguration corsConfiguration = new CorsConfiguration();
 				corsConfiguration.setAllowCredentials(true);
 				corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "https://mak48.github.io",
-						"https://mak48.github.io/reactCoursework", "https://rolik00-coursework.sliplane.app"));
+						"https://mak48.github.io/reactCoursework", "https://rolik00-coursework.sliplane.app", "http://rolik00-coursework.sliplane.app"));
 				corsConfiguration.setAllowedMethods(Arrays.asList("OPTIONS", "HEAD", "GET", "PUT", "POST", "DELETE", "PATCH"));
 				corsConfiguration.setAllowedHeaders(Collections.singletonList("*"));
 				corsConfiguration.setMaxAge(Duration.ofMinutes(5L));
@@ -76,5 +80,19 @@ public class WebSecurityConfig {
 				.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();
+	}
+
+	@Bean
+	public OpenAPI customOpenAPI() {
+		return new OpenAPI()
+				.servers(List.of(
+						new Server().url("https://rolik00-coursework.sliplane.app").description("Production server"),
+						new Server().url("http://localhost:8080").description("Local server")
+				))
+				.info(new Info()
+						.title("MinorsHSEFeedback API")
+						.version("1.0")
+						.description("API для работы с отзывами")
+				);
 	}
 }
