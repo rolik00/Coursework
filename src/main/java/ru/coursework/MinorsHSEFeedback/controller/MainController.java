@@ -11,9 +11,11 @@ import ru.coursework.MinorsHSEFeedback.controller.handler.GetAllUsersHandler;
 import ru.coursework.MinorsHSEFeedback.controller.handler.GetMinorsByCategoriesHandler;
 import ru.coursework.MinorsHSEFeedback.controller.handler.GetMinorsByIdsHandler;
 import ru.coursework.MinorsHSEFeedback.controller.handler.GetSortedMinorsByCategoriesHandler;
+import ru.coursework.MinorsHSEFeedback.db.ui.MinorTitleInfo;
 import ru.coursework.MinorsHSEFeedback.db.ui.UiMinor;
 import ru.coursework.MinorsHSEFeedback.db.ui.UiUser;
 import ru.coursework.MinorsHSEFeedback.enums.Sort;
+import ru.coursework.MinorsHSEFeedback.service.MinorService;
 
 import java.util.List;
 import java.util.Set;
@@ -27,6 +29,7 @@ public class MainController {
     private final GetAllSortedMinorsHandler getAllSortedMinorsHandler;
     private final GetSortedMinorsByCategoriesHandler getSortedMinorsByCategoriesHandler;
     private final GetMinorsByIdsHandler getMinorsByIdsHandler;
+    private final MinorService minorService;
 
     @Operation(summary = "Получить всех пользователей")
     @GetMapping("/users")
@@ -65,5 +68,11 @@ public class MainController {
     public List<UiMinor> getMinorsForComparisonTable(
             @RequestParam(name = "ids") Set<Long> ids) {
         return getMinorsByIdsHandler.handle(ids);
+    }
+
+    @Operation(summary = "Получить названия всех майноров")
+    @GetMapping("/minors_title")
+    public List<MinorTitleInfo> getMinorTitleInfo() {
+        return minorService.getMinorTitleInfo();
     }
 }
