@@ -1,7 +1,7 @@
 package ru.coursework.MinorsHSEFeedback.service;
 
 import ru.coursework.MinorsHSEFeedback.db.Minor;
-import ru.coursework.MinorsHSEFeedback.db.ui.MinorTitleInfo;
+import ru.coursework.MinorsHSEFeedback.db.MinorTitleInfo;
 
 import java.util.List;
 import java.util.Set;

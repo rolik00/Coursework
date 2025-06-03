@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.coursework.MinorsHSEFeedback.db.Minor;
-import ru.coursework.MinorsHSEFeedback.db.ui.MinorTitleInfo;
+import ru.coursework.MinorsHSEFeedback.db.MinorTitleInfo;
 import ru.coursework.MinorsHSEFeedback.repository.MinorRepository;
 import ru.coursework.MinorsHSEFeedback.service.MinorService;
 

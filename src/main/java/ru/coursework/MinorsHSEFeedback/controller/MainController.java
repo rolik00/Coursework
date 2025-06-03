@@ -11,7 +11,7 @@ import ru.coursework.MinorsHSEFeedback.controller.handler.GetAllUsersHandler;
 import ru.coursework.MinorsHSEFeedback.controller.handler.GetMinorsByCategoriesHandler;
 import ru.coursework.MinorsHSEFeedback.controller.handler.GetMinorsByIdsHandler;
 import ru.coursework.MinorsHSEFeedback.controller.handler.GetSortedMinorsByCategoriesHandler;
-import ru.coursework.MinorsHSEFeedback.db.ui.MinorTitleInfo;
+import ru.coursework.MinorsHSEFeedback.db.MinorTitleInfo;
 import ru.coursework.MinorsHSEFeedback.db.ui.UiMinor;
 import ru.coursework.MinorsHSEFeedback.db.ui.UiUser;
 import ru.coursework.MinorsHSEFeedback.enums.Sort;
